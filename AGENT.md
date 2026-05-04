@@ -75,13 +75,14 @@
 
 ## `mockcat-ui` (Android) — mock **rules** editor
 
+- `MockcatActivity` uses `android:launchMode="singleTask"` and a dedicated `android:taskAffinity` so repeated launches bring the same editor forward (Chucker-style). `MockcatUi.createLaunchIntent` must **not** add `FLAG_ACTIVITY_MULTIPLE_TASK` when `newTaskOrDocument` is true, or each tap spawns another task.
 - `MockcatUi.createLaunchIntent(context, newTaskOrDocument = true)` — public entry to `MockcatActivity` (declared in the library manifest, `android:exported="false"`; only your app’s package can start it unless you add a manifest `tools:node` / proxy activity).
 - Optional: `MockcatUi.createLaunchPendingIntent` for notifications.
 
 ## `mockcat-logger-ui` (Compose MPP) — traffic **log** list
 
 - `HttpLogListContentFromRegistry` (see `HttpLogListFromRegistry.kt`) — list backed by `HttpLogReaderRegistry` (the host does not pass a reader in the common case). You can still embed `HttpLogListScreen` with your own `calls` if needed.
-- **Android:** `MockcatLoggerUi.createLaunchIntent(context, newTaskOrDocument = true)` and `@JvmName("getHttpLogListScreen") getHttpLogListScreen(context) → Intent` for a separate task (same style as [MockcatUi](mockcat-ui) / Chucker). Activity is in the library manifest, `android:exported="false"`.
+- **Android:** `HttpLogListActivity` is also `singleTask` with its own `taskAffinity`; intents omit `FLAG_ACTIVITY_MULTIPLE_TASK` for the same reuse behavior as the mock editor. `MockcatLoggerUi.createLaunchIntent(context, newTaskOrDocument = true)` and `@JvmName("getHttpLogListScreen") getHttpLogListScreen(context) → Intent` start that activity in the library manifest, `android:exported="false"`.
 - **iOS:** `createHttpLogListViewController()`; `installHttpLogReaderForIos()` once (wraps `getHttpLogStoreForIos()` in `mockcat-logger-persistence`). Not the same module as the mock editor above.
 
 ## Gradle plugin (`com.mockcat.mockcat-gradle`)

@@ -1,5 +1,6 @@
 package com.mockcat.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -7,8 +8,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -41,22 +45,55 @@ fun MockcatApp(
     LaunchedEffect(viewModel) {
         viewModel.state.collect { ui = it }
     }
+    val form = ui.form
+    BackHandler(enabled = form != null) {
+        viewModel.closeEditor()
+    }
     MaterialTheme {
         Scaffold(
             modifier = modifier.fillMaxSize(),
-            topBar = { TopAppBar(title = { Text("Mockcat") }) },
+            topBar = {
+                if (form == null) {
+                    TopAppBar(title = { Text("Mockcat") })
+                } else {
+                    TopAppBar(
+                        title = {
+                            Text(
+                                if (form.id == 0L) {
+                                    "Add mock"
+                                } else {
+                                    "Edit mock"
+                                },
+                            )
+                        },
+                        navigationIcon = {
+                            IconButton(
+                                onClick = { viewModel.closeEditor() },
+                            ) {
+                                Text(
+                                    "←",
+                                    style = MaterialTheme.typography.titleLarge,
+                                )
+                            }
+                        },
+                    )
+                }
+            },
         ) { padding ->
             Column(
-                modifier = Modifier.padding(padding).padding(16.dp),
+                modifier = Modifier.padding(padding).padding(16.dp).fillMaxSize(),
             ) {
-                if (ui.form == null) {
+                if (form == null) {
                     Button(
                         onClick = { viewModel.openEditor(null) },
                         modifier = Modifier.fillMaxWidth(),
                     ) {
                         Text("Add mock")
                     }
-                    LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    LazyColumn(
+                        modifier = Modifier.weight(1f).fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
                         items(ui.entries) { m: MockEntry ->
                             ListItem(
                                 headlineContent = { Text(m.url) },
@@ -69,7 +106,8 @@ fun MockcatApp(
                     }
                 } else {
                     FormContent(
-                        form = ui.form!!,
+                        modifier = Modifier.fillMaxSize(),
+                        form = form,
                         onUpdate = { viewModel.setForm(it) },
                         onSave = { scope.launch { viewModel.saveForm() } },
                         onCancel = { viewModel.closeEditor() },
@@ -82,47 +120,67 @@ fun MockcatApp(
 
 @Composable
 private fun FormContent(
+    modifier: Modifier = Modifier,
     form: MockFormState,
     onUpdate: (MockFormState) -> Unit,
     onSave: () -> Unit,
     onCancel: () -> Unit,
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    val scroll = rememberScrollState()
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(scroll)
+            .padding(bottom = 24.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
         OutlinedTextField(
             value = form.url,
             onValueChange = { onUpdate(form.copy(url = it)) },
             label = { Text("URL") },
+            placeholder = { Text("https://10.0.2.2:8080/api/movies") },
+            singleLine = true,
             modifier = Modifier.fillMaxWidth(),
         )
         OutlinedTextField(
             value = form.method,
             onValueChange = { onUpdate(form.copy(method = it)) },
-            label = { Text("Method") },
+            label = { Text("HTTP method") },
+            placeholder = { Text("GET") },
+            singleLine = true,
             modifier = Modifier.fillMaxWidth(),
         )
         OutlinedTextField(
             value = form.label,
             onValueChange = { onUpdate(form.copy(label = it)) },
-            label = { Text("Label") },
+            label = { Text("Label (optional)") },
+            placeholder = { Text("e.g. Movies list") },
+            singleLine = true,
             modifier = Modifier.fillMaxWidth(),
         )
         OutlinedTextField(
-            value = form.mockType.name,
-            onValueChange = { t -> onUpdate(form.copy(mockType = t.toEnumOrDefault())) },
-            label = { Text("Type (STATIC/REDIRECT)") },
+            value = form.mockTypeInput,
+            onValueChange = { onUpdate(form.copy(mockTypeInput = it)) },
+            label = { Text("Mock type") },
+            placeholder = { Text("STATIC or REDIRECT") },
+            singleLine = true,
             modifier = Modifier.fillMaxWidth(),
         )
-        if (form.mockType == MockType.STATIC) {
+        if (form.resolvedMockType() == MockType.STATIC) {
             OutlinedTextField(
                 value = form.responseCode,
                 onValueChange = { onUpdate(form.copy(responseCode = it)) },
                 label = { Text("Response code") },
+                placeholder = { Text("200") },
+                singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
             )
             OutlinedTextField(
                 value = form.responseBody,
                 onValueChange = { onUpdate(form.copy(responseBody = it)) },
                 label = { Text("Response body") },
+                placeholder = { Text("{\"items\":[]}") },
+                minLines = 5,
                 modifier = Modifier.fillMaxWidth(),
             )
         } else {
@@ -130,9 +188,20 @@ private fun FormContent(
                 value = form.redirectUrl,
                 onValueChange = { onUpdate(form.copy(redirectUrl = it)) },
                 label = { Text("Redirect URL") },
+                placeholder = { Text("https://…") },
+                singleLine = false,
+                minLines = 2,
                 modifier = Modifier.fillMaxWidth(),
             )
         }
+        OutlinedTextField(
+            value = form.delayMs,
+            onValueChange = { onUpdate(form.copy(delayMs = it)) },
+            label = { Text("Delay (ms, optional)") },
+            placeholder = { Text("0") },
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth(),
+        )
         Button(
             onClick = onSave,
             modifier = Modifier.fillMaxWidth(),
@@ -142,10 +211,4 @@ private fun FormContent(
             modifier = Modifier.fillMaxWidth(),
         ) { Text("Cancel") }
     }
-}
-
-private fun String.toEnumOrDefault(): MockType = try {
-    MockType.valueOf(this.trim().uppercase())
-} catch (_: Exception) {
-    MockType.STATIC
 }

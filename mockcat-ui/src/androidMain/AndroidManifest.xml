@@ -4,6 +4,8 @@
         <activity
             android:name=".MockcatActivity"
             android:exported="false"
+            android:launchMode="singleTask"
+            android:taskAffinity="com.mockcat.ui.editor.task"
             android:theme="@android:style/Theme.Material.Light.NoActionBar" />
     </application>
 </manifest>

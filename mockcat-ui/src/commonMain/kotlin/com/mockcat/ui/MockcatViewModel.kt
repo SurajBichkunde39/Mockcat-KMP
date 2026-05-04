@@ -71,22 +71,26 @@ data class MockFormState(
     val label: String,
     val method: String,
     val isEnabled: Boolean,
-    val mockType: MockType,
+    /** Raw text for STATIC / REDIRECT; blank defaults to STATIC in [toEntry]. */
+    val mockTypeInput: String,
     val responseCode: String,
     val responseBody: String,
     val delayMs: String,
     val redirectUrl: String,
 ) {
+    fun resolvedMockType(): MockType = mockTypeInput.toMockTypeOrDefault()
+
     companion object {
         fun empty() = MockFormState(
-            url = "https://",
+            id = 0L,
+            url = "",
             label = "",
-            method = "GET",
+            method = "",
             isEnabled = true,
-            mockType = MockType.STATIC,
-            responseCode = "200",
-            responseBody = "{}",
-            delayMs = "0",
+            mockTypeInput = "",
+            responseCode = "",
+            responseBody = "",
+            delayMs = "",
             redirectUrl = "",
         )
 
@@ -112,10 +116,10 @@ data class MockFormState(
                 label = e.label,
                 method = e.httpMethod,
                 isEnabled = e.isEnabled,
-                mockType = e.mockType,
+                mockTypeInput = e.mockType.name,
                 responseCode = responseCodeStr,
                 responseBody = responseBodyStr,
-                delayMs = e.delayMs?.toString() ?: "0",
+                delayMs = e.delayMs?.toString() ?: "",
                 redirectUrl = e.redirectUrl.orEmpty(),
             )
         }
@@ -127,9 +131,9 @@ data class MockFormState(
             id = id,
             url = base,
             label = label.trim(),
-            httpMethod = method.trim().uppercase(),
+            httpMethod = method.trim().uppercase().ifBlank { "GET" },
             isEnabled = isEnabled,
-            mockType = mockType,
+            mockType = resolvedMockType(),
             staticResponse = null,
             responseCode = responseCode.toIntOrNull(),
             responseBody = responseBody.ifBlank { null },
@@ -139,4 +143,10 @@ data class MockFormState(
             requiredQueryParams = if (q.isEmpty()) null else q,
         )
     }
+}
+
+private fun String.toMockTypeOrDefault(): MockType = try {
+    MockType.valueOf(trim().uppercase())
+} catch (_: Exception) {
+    MockType.STATIC
 }

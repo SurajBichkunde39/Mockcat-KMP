@@ -2,7 +2,6 @@ package com.mockcat.logger.ui
 
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 
 object MockcatLoggerUi {
     @JvmStatic
@@ -12,10 +11,9 @@ object MockcatLoggerUi {
         newTaskOrDocument: Boolean = true,
     ): Intent = Intent(context, HttpLogListActivity::class.java).apply {
         if (newTaskOrDocument) {
+            // Same pattern as [mockcat-ui.MockcatUi]: new task without FLAG_ACTIVITY_MULTIPLE_TASK
+            // so [singleTask] + [taskAffinity] in the manifest reuses one log window.
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
-            }
         }
     }
 

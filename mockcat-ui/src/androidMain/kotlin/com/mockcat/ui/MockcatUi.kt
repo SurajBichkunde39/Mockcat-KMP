@@ -17,10 +17,10 @@ object MockcatUi {
         newTaskOrDocument: Boolean = true,
     ): Intent = Intent(context, MockcatActivity::class.java).apply {
         if (newTaskOrDocument) {
+            // Separate task (like Chucker) but do **not** use FLAG_ACTIVITY_MULTIPLE_TASK — that
+            // allows parallel tasks so each tap opens another window. [singleTask] + [taskAffinity]
+            // in the manifest brings an existing editor task to the front instead.
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
-            }
         }
     }
 
