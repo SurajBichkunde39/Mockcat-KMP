@@ -1,0 +1,12 @@
+---
+description: Mockcat KMP monorepo conventions and module boundaries
+alwaysApply: true
+---
+
+# Mockcat
+
+- This is a **Kotlin Multiplatform** project: respect `commonMain` / `androidMain` / `iosMain` boundaries; keep `mockcat-api` free of platform types.
+- **Do not** add a DI framework (Koin, Hilt, Dagger) to library modules. Sample apps may wire `MockcatStore` and `HttpClient` manually.
+- Prefer **small, focused changes**; match existing naming, tests, and JSON shapes used by `MockcatStore` / Room entities.
+- Run **ktlint** and **detekt** after substantive Kotlin edits; do not reformat generated `build/` output—root Gradle already excludes it from ktlint.
+- Version alignment: **KSP** must match **Kotlin** in `gradle/libs.versions.toml`. **Room** on Apple targets must compile with the same Kotlin native ABI as the published Room klibs.

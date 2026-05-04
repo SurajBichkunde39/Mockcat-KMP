@@ -1,0 +1,28 @@
+rootProject.name = "mockcat"
+
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+include(
+    ":mockcat-api",
+    ":mockcat-persistence",
+    ":mockcat-ui",
+    ":mockcat-intercept-okhttp",
+    ":mockcat-intercept-ktor",
+    ":mockcat-intercept-urlsession",
+    ":mockcat-integration-chucker",
+    ":mockcat-gradle-plugin",
+    ":sample-compose",
+)

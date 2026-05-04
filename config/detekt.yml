@@ -1,0 +1,20 @@
+build:
+  maxIssues: 0
+
+style:
+  WildcardImport:
+    active: false
+  NewLineAtEndOfFile:
+    active: true
+
+naming:
+  ClassNaming:
+    classPattern: "[A-Z][A-Za-z0-9]*"
+
+empty-blocks:
+  EmptyClassBlock:
+    active: true
+
+complexity:
+  LongMethod:
+    threshold: 60
