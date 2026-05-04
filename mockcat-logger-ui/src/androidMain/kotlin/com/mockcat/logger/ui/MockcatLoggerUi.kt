@@ -11,7 +11,7 @@ object MockcatLoggerUi {
         newTaskOrDocument: Boolean = true,
     ): Intent = Intent(context, HttpLogListActivity::class.java).apply {
         if (newTaskOrDocument) {
-            // Same pattern as [mockcat-ui.MockcatUi]: new task without FLAG_ACTIVITY_MULTIPLE_TASK
+            // Same pattern as [mockcat-intercept-ui.MockcatUi]: new task without FLAG_ACTIVITY_MULTIPLE_TASK
             // so [singleTask] + [taskAffinity] in the manifest reuses one log window.
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }

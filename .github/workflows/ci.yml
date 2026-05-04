@@ -26,6 +26,7 @@ jobs:
           :sample-compose:assembleDebug
           :sample-server:compileKotlin
           :mockcat-api:compileAndroidMain
+          :mockcat-intercept-ui:compileAndroidMain
           :mockcat-intercept-persistence:compileDebugKotlinAndroid
           :mockcat-intercept-persistence:compileKotlinIosSimulatorArm64
           :mockcat-logger:compileAndroidMain

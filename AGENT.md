@@ -15,8 +15,8 @@
 | `mockcat-logger-okhttp` | Android: `MockcatHttpLoggingInterceptor` (read-only log + forward); maps OkHttp to `com.mockcat.api.http` |
 | `mockcat-logger-ktor` | KMP: Ktor `HttpClient` plugin `MockcatKtorHttpLogging` (OkHttp / JVM / Android) → `HttpLogWriter` / `LoggedHttpCall`; do not also install `MockcatLogging` on the same OkHttp client or logs may duplicate |
 | `mockcat-okhttp-android` | Android: `addInterceptor(MockcatLogging(context))`, `MockcatIntercept(context)` + `bindClient(OkHttpClient)` after `build()`. The process-singleton `RoomHttpLogStore` (same as `getHttpLogStoreForAndroid` / `getMockcatStoreForAndroid`) is registered on **`HttpLogReaderRegistry`** when first created, so the log UI can resolve the reader without app wiring |
-| `mockcat-logger-ui` | Compose Multiplatform: `HttpLogListScreen`, `HttpLogListContentFromRegistry` (reads the registry). **Android:** `HttpLogListActivity`, `MockcatLoggerUi.createLaunchIntent` / `@JvmName("getHttpLogListScreen")`. **iOS:** `createHttpLogListViewController`, `installHttpLogReaderForIos()`. Mock **editor** is `mockcat-ui` — different module |
-| `mockcat-ui` | Compose Multiplatform UI + `MockcatViewModel` for **mock rules** (manual wiring, **no DI framework in libraries**) |
+| `mockcat-logger-ui` | Compose Multiplatform: `HttpLogListScreen`, `HttpLogListContentFromRegistry` (reads the registry). **Android:** `HttpLogListActivity`, `MockcatLoggerUi.createLaunchIntent` / `@JvmName("getHttpLogListScreen")`. **iOS:** `createHttpLogListViewController`, `installHttpLogReaderForIos()`. Mock **editor** is `mockcat-intercept-ui` — different module |
+| `mockcat-intercept-ui` | Compose Multiplatform UI + `MockcatViewModel` for **mock rules** (manual wiring, **no DI framework in libraries**) |
 | `mockcat-intercept-okhttp` | `MockcatOkHttpInterceptor` |
 | `mockcat-intercept-ktor` | `MockcatKtor.createHttpClient` (OkHttp engine) |
 | `mockcat-intercept-urlsession` | iOS: `NSURLRequest` → `HttpRequestMetadata`, `runMockcatUrlSessionResolve` for `URLProtocol` / Swift |
@@ -52,7 +52,7 @@
 
 - Android debug: `./gradlew :sample-compose:assembleDebug`
 - iOS KSP (Room): `./gradlew :mockcat-intercept-persistence:kspKotlinIosSimulatorArm64` and/or `:mockcat-logger-persistence:kspKotlinIosSimulatorArm64` (or `kspKotlinIosArm64`)
-- Logger stack compile: `:mockcat-logger:compileAndroidMain`, `:mockcat-logger-persistence:compileDebugKotlinAndroid`, `:mockcat-logger-okhttp:compileAndroidMain`, `:mockcat-okhttp-android:compileAndroidMain`, `:mockcat-logger-ui:compileAndroidMain`, `:mockcat-logger-ui:compileKotlinIosSimulatorArm64`
+- Logger stack compile: `:mockcat-logger:compileAndroidMain`, `:mockcat-logger-persistence:compileDebugKotlinAndroid`, `:mockcat-logger-okhttp:compileAndroidMain`, `:mockcat-okhttp-android:compileAndroidMain`, `:mockcat-logger-ui:compileAndroidMain`, `:mockcat-logger-ui:compileKotlinIosSimulatorArm64`. Mock rules UI: `:mockcat-intercept-ui:compileAndroidMain`
 - iOS **frameworks** for the Swift app (simulator arm64, debug; run **Embed & Sign** in Xcode in dependency order, see `iosApp/MockcatSample/README.md`):
   - `./gradlew :mockcat-api:linkDebugFrameworkIosSimulatorArm64`
   - `./gradlew :mockcat-intercept-persistence:linkDebugFrameworkIosSimulatorArm64`
@@ -71,9 +71,9 @@
 ## Android `sample-compose`
 
 - **Ktor server (host):** `./gradlew :sample-server:run` — listens on `http://127.0.0.1:8080`. The emulator uses `http://10.0.2.2:8080` (see `MovieConfig.BASE_URL` in `com.mockcat.sample.data`); for a physical device, use your machine’s LAN IP or `adb reverse tcp:8080 tcp:8080` and `http://127.0.0.1:8080`.
-- **App (MVVM):** `OkHttpClientFactory` uses Chucker + [`MockcatLogging(context)`](mockcat-okhttp-android) + [`MockcatIntercept(context)`](mockcat-okhttp-android) and `bindClient` for redirects. Process-wide stores and **`HttpLogReaderRegistry`** are initialized when the interceptors create the process stores. The “HTTP log” top bar action uses [`MockcatLoggerUi.getHttpLogListScreen(context)`](mockcat-logger-ui) / `startActivity` — the sample does not embed [HttpLogListScreen](mockcat-logger-ui) in the main graph or pass `HttpLogReader` into the `MoviesViewModel`. The sample also depends on `mockcat-ui`; the list screen **Mocks** action starts [`MockcatUi.createLaunchIntent`](mockcat-ui) (same process-wide mock store as `MockcatIntercept`). Hand-written Room migrations are deferred (destructive fallback). Packages: `data` (config, DTOs, `OkHttpClientFactory`, repository), `ui.movies` (ViewModel, screen), `ui.theme`.
+- **App (MVVM):** `OkHttpClientFactory` uses Chucker + [`MockcatLogging(context)`](mockcat-okhttp-android) + [`MockcatIntercept(context)`](mockcat-okhttp-android) and `bindClient` for redirects. Process-wide stores and **`HttpLogReaderRegistry`** are initialized when the interceptors create the process stores. The “HTTP log” top bar action uses [`MockcatLoggerUi.getHttpLogListScreen(context)`](mockcat-logger-ui) / `startActivity` — the sample does not embed [HttpLogListScreen](mockcat-logger-ui) in the main graph or pass `HttpLogReader` into the `MoviesViewModel`. The sample also depends on `mockcat-intercept-ui`; the list screen **Mocks** action starts [`MockcatUi.createLaunchIntent`](mockcat-intercept-ui) (same process-wide mock store as `MockcatIntercept`). Hand-written Room migrations are deferred (destructive fallback). Packages: `data` (config, DTOs, `OkHttpClientFactory`, repository), `ui.movies` (ViewModel, screen), `ui.theme`.
 
-## `mockcat-ui` (Android) — mock **rules** editor
+## `mockcat-intercept-ui` (Android) — mock **rules** editor
 
 - `MockcatActivity` uses `android:launchMode="singleTask"` and a dedicated `android:taskAffinity` so repeated launches bring the same editor forward (Chucker-style). `MockcatUi.createLaunchIntent` must **not** add `FLAG_ACTIVITY_MULTIPLE_TASK` when `newTaskOrDocument` is true, or each tap spawns another task.
 - `MockcatUi.createLaunchIntent(context, newTaskOrDocument = true)` — public entry to `MockcatActivity` (declared in the library manifest, `android:exported="false"`; only your app’s package can start it unless you add a manifest `tools:node` / proxy activity).
