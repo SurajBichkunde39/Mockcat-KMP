@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -25,12 +26,20 @@ import com.mockcat.api.http.LoggedHttpCall
 fun HttpLogListScreen(
     title: String = "HTTP log",
     calls: List<LoggedHttpCall>,
+    onBack: (() -> Unit)? = null,
     onCallClick: (Long) -> Unit = {},
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text(title) },
+                navigationIcon = {
+                    if (onBack != null) {
+                        IconButton(onClick = onBack) {
+                            Text("←", style = MaterialTheme.typography.titleLarge)
+                        }
+                    }
+                },
             )
         },
     ) { padding ->

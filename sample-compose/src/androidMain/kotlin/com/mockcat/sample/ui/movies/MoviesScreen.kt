@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mockcat.logger.ui.HttpLogListScreen
 import com.mockcat.sample.data.FilmDto
 import com.mockcat.sample.data.MovieConfig
 
@@ -42,6 +43,16 @@ fun MoviesScreen(
     viewModel: MoviesViewModel,
 ) {
     val s = viewModel.uiState.collectAsStateWithLifecycle().value
+    val httpLogCalls = viewModel.httpLogCalls.collectAsStateWithLifecycle()
+
+    if (s.showHttpLog) {
+        HttpLogListScreen(
+            title = "Mockcat HTTP log",
+            calls = httpLogCalls.value,
+            onBack = { viewModel.onCloseHttpLog() },
+        )
+        return
+    }
 
     Scaffold(
         topBar = {
@@ -60,10 +71,15 @@ fun MoviesScreen(
                         Column {
                             Text("Mockcat sample")
                             Text(
-                                "OkHttp + MockcatOkHttpInterceptor + Chucker",
+                                "MockcatHttpLoggingInterceptor + store + Chucker",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
+                        }
+                    },
+                    actions = {
+                        TextButton(onClick = { viewModel.onOpenHttpLog() }) {
+                            Text("HTTP log")
                         }
                     },
                 )

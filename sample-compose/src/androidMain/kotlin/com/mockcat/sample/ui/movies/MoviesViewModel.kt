@@ -2,10 +2,13 @@ package com.mockcat.sample.ui.movies
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mockcat.logger.HttpLogReader
 import com.mockcat.sample.data.FilmDto
 import com.mockcat.sample.data.MovieRepository
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -17,15 +20,25 @@ data class MoviesUiState(
     val isLoading: Boolean = false,
     val isLoadingDetail: Boolean = false,
     val errorMessage: String? = null,
+    val showHttpLog: Boolean = false,
 ) {
     val isListEmpty: Boolean get() = list.isEmpty() && !isLoading
 }
 
 class MoviesViewModel(
     private val repository: MovieRepository,
+    httpLogReader: HttpLogReader,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(MoviesUiState())
     val uiState = _uiState.asStateFlow()
+
+    val httpLogCalls = httpLogReader
+        .observeLogs()
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5_000L),
+            emptyList(),
+        )
 
     fun loadMovieList() {
         viewModelScope.launch {
@@ -79,5 +92,13 @@ class MoviesViewModel(
 
     fun onDismissError() {
         _uiState.update { it.copy(errorMessage = null) }
+    }
+
+    fun onOpenHttpLog() {
+        _uiState.update { it.copy(showHttpLog = true) }
+    }
+
+    fun onCloseHttpLog() {
+        _uiState.update { it.copy(showHttpLog = false) }
     }
 }

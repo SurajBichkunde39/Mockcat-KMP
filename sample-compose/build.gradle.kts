@@ -12,10 +12,9 @@ kotlin {
     sourceSets {
         val androidMain by getting {
             dependencies {
-                // [OkHttpClientFactory] is the only app source that touches the store; UI/ViewModel do not.
-                implementation(project(":mockcat-api"))
-                implementation(project(":mockcat-persistence"))
-                implementation(project(":mockcat-intercept-okhttp"))
+                // [OkHttpClientFactory] and [MockcatLogging.logReader] via [mockcat-okhttp-android]; ViewModel uses [HttpLogReader] for the log screen.
+                implementation(project(":mockcat-okhttp-android"))
+                implementation(project(":mockcat-logger-ui"))
                 implementation(libs.androidxActivityCompose)
                 implementation(libs.androidx.lifecycle.viewmodel.compose)
                 implementation(libs.androidx.lifecycle.viewmodel.ktx)

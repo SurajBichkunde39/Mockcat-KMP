@@ -1,5 +1,7 @@
 # Mockcat (agent context)
 
+**Do not `git commit` in this repository unless the user explicitly asks to commit** — they prefer to review diffs first and commit when aligned.
+
 **Mockcat** is a Kotlin Multiplatform monorepo for HTTP mocking, traffic logging, shared API and storage, platform interceptors, optional UI, and tooling.
 
 ## Layout
@@ -11,6 +13,7 @@
 | `mockcat-logger` | `HttpLogWriter` / `HttpLogReader`, `InMemoryHttpLogStore` (ring buffer) — depends on `mockcat-api` only |
 | `mockcat-logger-persistence` | **Separate** Room DB for HTTP call logs only (`http_log_db` file); `RoomHttpLogStore`; **does not** depend on `mockcat-persistence` |
 | `mockcat-logger-okhttp` | Android: `MockcatHttpLoggingInterceptor` (read-only log + forward); maps OkHttp to `com.mockcat.api.http` |
+| `mockcat-okhttp-android` | Android: `addInterceptor(MockcatLogging(context))`, `MockcatIntercept(context)` + `bindClient(OkHttpClient)` after `build()`; `MockcatLogging.logReader` for the log list — process-singleton `RoomHttpLogStore` and `MockcatStore` (same as `getHttpLogStoreForAndroid` / `getMockcatStoreForAndroid`) |
 | `mockcat-logger-ui` | Compose Multiplatform: `HttpLogListScreen` (traffic list); separate from the mock **editor** in `mockcat-ui` |
 | `mockcat-ui` | Compose Multiplatform UI + `MockcatViewModel` for **mock rules** (manual wiring, **no DI framework in libraries**) |
 | `mockcat-intercept-okhttp` | `MockcatOkHttpInterceptor` |
@@ -48,7 +51,7 @@
 
 - Android debug: `./gradlew :sample-compose:assembleDebug`
 - iOS KSP (Room): `./gradlew :mockcat-persistence:kspKotlinIosSimulatorArm64` and/or `:mockcat-logger-persistence:kspKotlinIosSimulatorArm64` (or `kspKotlinIosArm64`)
-- Logger stack compile: `:mockcat-logger:compileAndroidMain`, `:mockcat-logger-persistence:compileDebugKotlinAndroid`, `:mockcat-logger-okhttp:compileAndroidMain`, `:mockcat-logger-ui:compileAndroidMain`
+- Logger stack compile: `:mockcat-logger:compileAndroidMain`, `:mockcat-logger-persistence:compileDebugKotlinAndroid`, `:mockcat-logger-okhttp:compileAndroidMain`, `:mockcat-okhttp-android:compileAndroidMain`, `:mockcat-logger-ui:compileAndroidMain`
 - iOS **frameworks** for the Swift app (simulator arm64, debug):
   - `./gradlew :mockcat-api:linkDebugFrameworkIosSimulatorArm64`
   - `./gradlew :mockcat-persistence:linkDebugFrameworkIosSimulatorArm64`
@@ -64,7 +67,7 @@
 ## Android `sample-compose`
 
 - **Ktor server (host):** `./gradlew :sample-server:run` — listens on `http://127.0.0.1:8080`. The emulator uses `http://10.0.2.2:8080` (see `MovieConfig.BASE_URL` in `com.mockcat.sample.data`); for a physical device, use your machine’s LAN IP or `adb reverse tcp:8080 tcp:8080` and `http://127.0.0.1:8080`.
-- **App (MVVM):** `MoviesViewModelFactory` builds an `OkHttpClient` with `OkHttpClientFactory.create(context)` — that factory adds Chucker and **`MockcatOkHttpInterceptor`**. Feature code (`MainActivity`, `MoviesViewModel`, `MovieRepository`) does **not** use `MockcatStore`; the store only exists inside `OkHttpClientFactory` to satisfy the interceptor. The sample depends on `mockcat-api` + `mockcat-persistence` for that composition root. **Next step** when you want a UI: add `mockcat-ui` and start the editor with `MockcatUi.createLaunchIntent` (or equivalent) from an Activity/button — client code does not need to call the store. Hand-written Room migrations are deferred; `getMockcatDatabase` uses destructive fallback while schema is still moving. Packages: `data` (config, DTOs, `OkHttpClientFactory`, repository), `ui.movies` (ViewModel, screen), `ui.theme`.
+- **App (MVVM):** `OkHttpClientFactory` uses Chucker + [`MockcatLogging(context)`](mockcat-okhttp-android) + [`MockcatIntercept(context)`](mockcat-okhttp-android) and `bindClient` for redirects. Process-wide stores match `getHttpLogStoreForAndroid` / `getMockcatStoreForAndroid`. `MockcatLogging.logReader(app)` supplies [HttpLogReader](mockcat-logger) to `MoviesViewModel` for the “HTTP log” screen ([HttpLogListScreen](mockcat-logger-ui)). The sample depends on `mockcat-okhttp-android` and `mockcat-logger-ui`. **Next step** for mocks UI: add `mockcat-ui` and `MockcatUi.createLaunchIntent` when desired. Hand-written Room migrations are deferred (destructive fallback). Packages: `data` (config, DTOs, `OkHttpClientFactory`, repository), `ui.movies` (ViewModel, screen), `ui.theme`.
 
 ## `mockcat-ui` (Android) — mock **rules** editor
 

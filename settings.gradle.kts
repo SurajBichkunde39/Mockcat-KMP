@@ -21,6 +21,7 @@ include(
     ":mockcat-logger",
     ":mockcat-logger-persistence",
     ":mockcat-logger-okhttp",
+    ":mockcat-okhttp-android",
     ":mockcat-logger-ui",
     ":mockcat-ui",
     ":mockcat-intercept-okhttp",

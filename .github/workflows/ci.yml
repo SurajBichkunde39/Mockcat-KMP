@@ -33,6 +33,7 @@ jobs:
           :mockcat-logger-persistence:compileDebugKotlinAndroid
           :mockcat-logger-persistence:compileKotlinIosSimulatorArm64
           :mockcat-logger-okhttp:compileAndroidMain
+          :mockcat-okhttp-android:compileAndroidMain
           :mockcat-logger-ui:compileAndroidMain
           :mockcat-gradle-plugin:build
           :mockcat-api:allTests

@@ -2,26 +2,26 @@ package com.mockcat.sample.data
 
 import android.content.Context
 import com.chuckerteam.chucker.api.ChuckerInterceptor
-import com.mockcat.intercept.okhttp.MockcatOkHttpInterceptor
-import com.mockcat.persistence.getMockcatStoreForAndroid
+import com.mockcat.android.okhttp.MockcatIntercept
+import com.mockcat.android.okhttp.MockcatLogging
 import okhttp3.OkHttpClient
 
 /**
- * **Composition root for Mockcat in the sample app:** builds an [OkHttpClient] with Chucker and
- * [MockcatOkHttpInterceptor] only. A [com.mockcat.api.MockcatStore] is still required for the
- * interceptor to resolve rules; it is created here via [getMockcatStoreForAndroid] and is not
- * part of the app’s feature code. Host apps that want a stricter API can add a small facade
- * module later; the interceptor API itself is “store in, OkHttp out.”
+ * **Composition root for the sample [OkHttpClient]:** Chucker, [MockcatLogging], and
+ * [com.mockcat.intercept.okhttp.MockcatOkHttpInterceptor] via [MockcatIntercept] (process-wide
+ * stores from [mockcat-okhttp-android]). Call [MockcatIntercept.bindClient] after building the
+ * client so redirect mocks can execute inner calls.
  */
 object OkHttpClientFactory {
     fun create(appContext: Context): OkHttpClient {
-        val store = getMockcatStoreForAndroid(appContext)
         val chucker = ChuckerInterceptor(appContext)
-        val mockcat = MockcatOkHttpInterceptor(store)
+        val httpLog = MockcatLogging(appContext)
+        val mockcat = MockcatIntercept(appContext)
         return OkHttpClient.Builder()
             .addInterceptor(chucker)
+            .addInterceptor(httpLog)
             .addInterceptor(mockcat)
             .build()
-            .also { client -> mockcat.setClient(client) }
+            .also { client -> mockcat.bindClient(client) }
     }
 }
