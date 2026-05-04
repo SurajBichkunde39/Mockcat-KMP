@@ -13,7 +13,9 @@ else
 fi
 cd "$REPO_ROOT"
 if [[ -x ./gradlew ]]; then
-  exec ./gradlew --no-daemon :mockcat-logger-ui:linkDebugFrameworkIosSimulatorArm64
+  exec ./gradlew --no-daemon \
+    :mockcat-logger-ui:linkDebugFrameworkIosSimulatorArm64 \
+    :mockcat-logger-urlsession:linkDebugFrameworkIosSimulatorArm64
 else
   echo "error: expected ./gradlew at $REPO_ROOT" >&2
   exit 1

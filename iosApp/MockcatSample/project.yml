@@ -19,8 +19,8 @@ targets:
     settings:
       PRODUCT_BUNDLE_IDENTIFIER: com.mockcat.MockcatSample
       # Built by link_kmp.sh; simulator arm64 (Apple Silicon). For device, build iosArm64 and adjust path.
-      FRAMEWORK_SEARCH_PATHS: $(inherited) $(SRCROOT)/../../mockcat-logger-ui/build/bin/iosSimulatorArm64/debugFramework
-      OTHER_LDFLAGS: $(inherited) -framework MockcatLoggerUI
+      FRAMEWORK_SEARCH_PATHS: $(inherited) $(SRCROOT)/../../mockcat-logger-ui/build/bin/iosSimulatorArm64/debugFramework $(SRCROOT)/../../mockcat-logger-urlsession/build/bin/iosSimulatorArm64/debugFramework
+      OTHER_LDFLAGS: $(inherited) -framework MockcatLoggerUI -framework MockcatLoggerUrlSession
     sources:
       - path: .
         excludes:

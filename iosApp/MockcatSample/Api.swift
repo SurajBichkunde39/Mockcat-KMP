@@ -1,4 +1,5 @@
 import Foundation
+import MockcatLoggerUrlSession
 
 struct ApiBaseURL {
     let url: URL
@@ -31,11 +32,32 @@ enum URLSessionApi {
         request.httpMethod = "GET"
         request.setValue("application/json", forHTTPHeaderField: "Accept")
 
-        let (data, response) = try await URLSession.shared.data(for: request)
-        if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
-            throw ApiError.badStatusCode(http.statusCode)
+        let t0 = MockcatUrlSessionLoggingKt.mockcatUrlSessionNowMs()
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            MockcatUrlSessionLoggingKt.mockcatUrlSessionLogCall(
+                request: request,
+                response: response,
+                data: data,
+                error: nil,
+                requestTimestampMs: t0,
+                maxResponseBodyBytes: 256 * 1024
+            )
+            if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
+                throw ApiError.badStatusCode(http.statusCode)
+            }
+            let decoder = JSONDecoder()
+            return try decoder.decode(T.self, from: data)
+        } catch {
+            MockcatUrlSessionLoggingKt.mockcatUrlSessionLogCall(
+                request: request,
+                response: nil,
+                data: nil,
+                error: error,
+                requestTimestampMs: t0,
+                maxResponseBodyBytes: 256 * 1024
+            )
+            throw error
         }
-        let decoder = JSONDecoder()
-        return try decoder.decode(T.self, from: data)
     }
 }
