@@ -39,6 +39,7 @@ import com.mockcat.logger.ui.MockcatLoggerUi
 import com.mockcat.sample.data.ClientKind
 import com.mockcat.sample.data.FilmDto
 import com.mockcat.sample.data.MovieConfig
+import com.mockcat.ui.MockcatUi
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,6 +54,9 @@ fun MoviesScreen(
         context.startActivity(
             MockcatLoggerUi.getHttpLogListScreen(context),
         )
+    }
+    val openMockEditor: () -> Unit = {
+        context.startActivity(MockcatUi.createLaunchIntent(context))
     }
     // Detail is in-memory state; let system / predictive back pop to the list, not the client picker.
     BackHandler(enabled = s.isDetail) { viewModel.onBack() }
@@ -86,6 +90,7 @@ fun MoviesScreen(
                         }
                     },
                     actions = {
+                        TextButton(onClick = openMockEditor) { Text("Mocks") }
                         TextButton(onClick = openHttpLogger) { Text("Logger") }
                         TextButton(onClick = onChangeClient) { Text("Change client") }
                     },
@@ -115,6 +120,7 @@ fun MoviesScreen(
                 ListSection(
                     state = s,
                     clientKind = clientKind,
+                    onOpenMockEditor = openMockEditor,
                     onOpenHttpLogger = openHttpLogger,
                     onLoad = { viewModel.loadMovieList() },
                     onFilmClick = { viewModel.openDetail(it) },
@@ -144,6 +150,7 @@ private fun ErrorBanner(
 private fun ListSection(
     state: MoviesUiState,
     clientKind: ClientKind,
+    onOpenMockEditor: () -> Unit,
     onOpenHttpLogger: () -> Unit,
     onLoad: () -> Unit,
     onFilmClick: (FilmDto) -> Unit,
@@ -167,6 +174,13 @@ private fun ListSection(
         ) { Text("Load movie list") }
         Spacer(Modifier.height(8.dp))
         FilledTonalButton(
+            onClick = onOpenMockEditor,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text("Open mock rules (Mockcat UI)")
+        }
+        Spacer(Modifier.height(8.dp))
+        FilledTonalButton(
             onClick = onOpenHttpLogger,
             modifier = Modifier.fillMaxWidth(),
         ) {
@@ -174,8 +188,10 @@ private fun ListSection(
         }
         Spacer(Modifier.height(8.dp))
         val mockHint = when (clientKind) {
-            ClientKind.OkHttp -> "Add mocks via Mockcat UI (when you wire mockcat-ui) or import; the OkHttp stack uses the shared store."
-            ClientKind.Ktor -> "This Ktor build does not run Mockcat interceptors; use OkHttp to exercise mocks."
+            ClientKind.OkHttp ->
+                "OkHttp uses Mockcat intercept + the same Room store as Mocks; add rules in Mockcat UI or import JSON."
+            ClientKind.Ktor ->
+                "This Ktor build does not run Mockcat interceptors; switch to OkHttp to exercise saved mocks."
         }
         Text(
             mockHint,

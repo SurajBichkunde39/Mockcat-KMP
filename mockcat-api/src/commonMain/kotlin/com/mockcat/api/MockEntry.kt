@@ -47,11 +47,6 @@ data class MockFileEntry(
 )
 
 @Serializable
-data class MockFileEntries(
+data class MultipleMockEntries(
     val entries: List<MockFileEntry>,
-)
-
-@Serializable
-data class MockEntries(
-    val entries: List<MockEntry>,
 )

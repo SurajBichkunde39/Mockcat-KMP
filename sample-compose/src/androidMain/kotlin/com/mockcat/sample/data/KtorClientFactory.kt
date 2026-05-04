@@ -13,20 +13,18 @@ object KtorClientFactory {
     /**
      * Ktor [HttpClient] (OkHttp engine) with JSON and mockcat's Ktor HTTP logger.
      */
-    fun create(appContext: Context): HttpClient {
-        return HttpClient(OkHttp) {
-            installMockcatKtorHttpLogging(appContext)
-            install(HttpTimeout) {
-                requestTimeoutMillis = 30_000
-            }
-            install(ContentNegotiation) {
-                json(
-                    Json {
-                        ignoreUnknownKeys = true
-                        isLenient = true
-                    },
-                )
-            }
+    fun create(appContext: Context): HttpClient = HttpClient(OkHttp) {
+        installMockcatKtorHttpLogging(appContext)
+        install(HttpTimeout) {
+            requestTimeoutMillis = 30_000
+        }
+        install(ContentNegotiation) {
+            json(
+                Json {
+                    ignoreUnknownKeys = true
+                    isLenient = true
+                },
+            )
         }
     }
 }
