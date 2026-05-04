@@ -1,5 +1,6 @@
 package com.mockcat.sample.ui.movies
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,6 +36,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mockcat.logger.ui.MockcatLoggerUi
+import com.mockcat.sample.data.ClientKind
 import com.mockcat.sample.data.FilmDto
 import com.mockcat.sample.data.MovieConfig
 
@@ -42,9 +44,18 @@ import com.mockcat.sample.data.MovieConfig
 @Composable
 fun MoviesScreen(
     viewModel: MoviesViewModel,
+    clientKind: ClientKind,
+    onChangeClient: () -> Unit,
 ) {
     val s = viewModel.uiState.collectAsStateWithLifecycle().value
     val context = LocalContext.current
+    val openHttpLogger: () -> Unit = {
+        context.startActivity(
+            MockcatLoggerUi.getHttpLogListScreen(context),
+        )
+    }
+    // Detail is in-memory state; let system / predictive back pop to the list, not the client picker.
+    BackHandler(enabled = s.isDetail) { viewModel.onBack() }
 
     Scaffold(
         topBar = {
@@ -58,27 +69,25 @@ fun MoviesScreen(
                     },
                 )
             } else {
+                val subtitle = when (clientKind) {
+                    ClientKind.OkHttp -> "Stack: OkHttp (Mockcat + Chucker + HTTP log)"
+                    ClientKind.Ktor ->
+                        "Stack: Ktor client. HTTP log is OkHttp–based; Ktor path may be empty or partial."
+                }
                 LargeTopAppBar(
                     title = {
                         Column {
                             Text("Mockcat sample")
                             Text(
-                                "MockcatHttpLoggingInterceptor + store + Chucker",
+                                subtitle,
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
                     },
                     actions = {
-                        TextButton(
-                            onClick = {
-                                context.startActivity(
-                                    MockcatLoggerUi.getHttpLogListScreen(context),
-                                )
-                            },
-                        ) {
-                            Text("HTTP log")
-                        }
+                        TextButton(onClick = openHttpLogger) { Text("Logger") }
+                        TextButton(onClick = onChangeClient) { Text("Change client") }
                     },
                 )
             }
@@ -105,6 +114,8 @@ fun MoviesScreen(
             } else {
                 ListSection(
                     state = s,
+                    clientKind = clientKind,
+                    onOpenHttpLogger = openHttpLogger,
                     onLoad = { viewModel.loadMovieList() },
                     onFilmClick = { viewModel.openDetail(it) },
                 )
@@ -132,6 +143,8 @@ private fun ErrorBanner(
 @Composable
 private fun ListSection(
     state: MoviesUiState,
+    clientKind: ClientKind,
+    onOpenHttpLogger: () -> Unit,
     onLoad: () -> Unit,
     onFilmClick: (FilmDto) -> Unit,
 ) {
@@ -153,8 +166,19 @@ private fun ListSection(
             modifier = Modifier.fillMaxWidth(),
         ) { Text("Load movie list") }
         Spacer(Modifier.height(8.dp))
+        FilledTonalButton(
+            onClick = onOpenHttpLogger,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text("Open logger (Mockcat HTTP log)")
+        }
+        Spacer(Modifier.height(8.dp))
+        val mockHint = when (clientKind) {
+            ClientKind.OkHttp -> "Add mocks via Mockcat UI (when you wire mockcat-ui) or import; the OkHttp stack uses the shared store."
+            ClientKind.Ktor -> "This Ktor build does not run Mockcat interceptors; use OkHttp to exercise mocks."
+        }
         Text(
-            "Add mocks via Mockcat UI (when you wire mockcat-ui) or import; the interceptor uses the shared store.",
+            mockHint,
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )

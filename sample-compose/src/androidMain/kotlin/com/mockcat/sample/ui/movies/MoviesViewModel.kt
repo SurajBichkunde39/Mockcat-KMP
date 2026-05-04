@@ -3,6 +3,7 @@ package com.mockcat.sample.ui.movies
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mockcat.sample.data.FilmDto
+import com.mockcat.sample.data.KtorMovieRepository
 import com.mockcat.sample.data.MovieRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -79,5 +80,10 @@ class MoviesViewModel(
 
     fun onDismissError() {
         _uiState.update { it.copy(errorMessage = null) }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        (repository as? KtorMovieRepository)?.close()
     }
 }
