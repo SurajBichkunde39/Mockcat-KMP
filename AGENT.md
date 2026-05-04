@@ -1,14 +1,18 @@
 # Mockcat (agent context)
 
-**Mockcat** is a Kotlin Multiplatform monorepo for HTTP mocking: shared API and storage, platform interceptors, optional UI, and tooling.
+**Mockcat** is a Kotlin Multiplatform monorepo for HTTP mocking, traffic logging, shared API and storage, platform interceptors, optional UI, and tooling.
 
 ## Layout
 
 | Module | Role |
 |--------|------|
-| `mockcat-api` | `HttpRequestMetadata` (full `url` + `baseUrl` / `queryParameters`), `MockEntry` + optional `requiredQueryParams`, `MockcatStore`, `MockMatcher` |
-| `mockcat-persistence` | Room (KMP) + `RoomMockcatStore`, bundled SQLite, import/export JSON |
-| `mockcat-ui` | Compose Multiplatform UI + `MockcatViewModel` (manual wiring, **no DI framework in libraries**) |
+| `mockcat-api` | **Shared** HTTP contract: `HttpRequestMetadata`, mock types (`MockEntry`, `MockcatResult`, `MockcatStore`, `MockMatcher`), and **logging** DTOs under `com.mockcat.api.http` (`HttpRequestSnapshot`, `HttpResponseSnapshot`, `LoggedHttpCall`, etc.) |
+| `mockcat-persistence` | Room (KMP) + `RoomMockcatStore` for **mock rules only**; bundled SQLite, import/export JSON |
+| `mockcat-logger` | `HttpLogWriter` / `HttpLogReader`, `InMemoryHttpLogStore` (ring buffer) — depends on `mockcat-api` only |
+| `mockcat-logger-persistence` | **Separate** Room DB for HTTP call logs only (`http_log_db` file); `RoomHttpLogStore`; **does not** depend on `mockcat-persistence` |
+| `mockcat-logger-okhttp` | Android: `MockcatHttpLoggingInterceptor` (read-only log + forward); maps OkHttp to `com.mockcat.api.http` |
+| `mockcat-logger-ui` | Compose Multiplatform: `HttpLogListScreen` (traffic list); separate from the mock **editor** in `mockcat-ui` |
+| `mockcat-ui` | Compose Multiplatform UI + `MockcatViewModel` for **mock rules** (manual wiring, **no DI framework in libraries**) |
 | `mockcat-intercept-okhttp` | `MockcatOkHttpInterceptor` |
 | `mockcat-intercept-ktor` | `MockcatKtor.createHttpClient` (OkHttp engine) |
 | `mockcat-intercept-urlsession` | iOS: `NSURLRequest` → `HttpRequestMetadata`, `runMockcatUrlSessionResolve` for `URLProtocol` / Swift |
@@ -20,11 +24,11 @@
 
 ## Conventions
 
-- **Tooling** (see `gradle/libs.versions.toml`): **Gradle 9.3+**, **AGP 9.1.1**, **Kotlin 2.2.21**, **KSP 2.3.7** (KSP 2.3+ is required for AGP 9 + the Android KMP library plugin; see [google/ksp#2476](https://github.com/google/ksp/issues/2476)). **Room 2.8.4** with the Room Gradle plugin only in `mockcat-persistence` (see below). **Compose Multiplatform** plugin `1.10.3` with **Material3** on its own line (`composeMaterial3`).
+- **Tooling** (see `gradle/libs.versions.toml`): **Gradle 9.3+**, **AGP 9.1.1**, **Kotlin 2.2.21**, **KSP 2.3.7** (KSP 2.3+ is required for AGP 9 + the Android KMP library plugin; see [google/ksp#2476](https://github.com/google/ksp/issues/2476)). **Room 2.8.4** with the Room Gradle plugin in `mockcat-persistence` and `mockcat-logger-persistence` (see below). **Compose Multiplatform** plugin `1.10.3` with **Material3** on its own line (`composeMaterial3`).
 
 - **Android KMP library plugin** (most modules): `com.android.kotlin.multiplatform.library` with a `kotlin { android { namespace; compileSdk; minSdk; compilerOptions { jvmTarget } } }` block. There is **no** top-level `android { }` in those modules. **Android main** compile task name is e.g. `:mockcat-api:compileAndroidMain` (single-variant plugin; not `compileDebugKotlinAndroid`).
 
-- **`mockcat-persistence` exception:** still uses `com.android.library` + `androidTarget { publishAllLibraryVariants() }` and the **`androidx.room` Gradle plugin** because the Room plugin is not yet compatible with `com.android.kotlin.multiplatform.library` (class cast on `KotlinMultiplatformAndroidCompilationImpl`). KSP for Room uses `kspAndroid` and `kspKotlinIos*`. Revisit when AndroidX Room supports the new Android KMP target.
+- **Room (KMP) `com.android.library` exception:** `mockcat-persistence` and `mockcat-logger-persistence` use `com.android.library` + `androidTarget { publishAllLibraryVariants() }` and the **`androidx.room` Gradle plugin** because the Room plugin is not yet compatible with `com.android.kotlin.multiplatform.library` (class cast on `KotlinMultiplatformAndroidCompilationImpl`). KSP for Room uses `kspAndroid` and `kspKotlinIos*`. Revisit when AndroidX Room supports the new Android KMP target.
 
 - **`gradle.properties`**
   - `android.builtInKotlin=false` — required for `sample-compose` (KMP + `com.android.application`); otherwise the `kotlin` extension is registered twice (see [issuetracker 438678642](https://issuetracker.google.com/issues/438678642)).
@@ -43,7 +47,8 @@
 ## Common tasks
 
 - Android debug: `./gradlew :sample-compose:assembleDebug`
-- iOS KSP (persistence): `./gradlew :mockcat-persistence:kspKotlinIosSimulatorArm64` (or `kspKotlinIosArm64`)
+- iOS KSP (Room): `./gradlew :mockcat-persistence:kspKotlinIosSimulatorArm64` and/or `:mockcat-logger-persistence:kspKotlinIosSimulatorArm64` (or `kspKotlinIosArm64`)
+- Logger stack compile: `:mockcat-logger:compileAndroidMain`, `:mockcat-logger-persistence:compileDebugKotlinAndroid`, `:mockcat-logger-okhttp:compileAndroidMain`, `:mockcat-logger-ui:compileAndroidMain`
 - iOS **frameworks** for the Swift app (simulator arm64, debug):
   - `./gradlew :mockcat-api:linkDebugFrameworkIosSimulatorArm64`
   - `./gradlew :mockcat-persistence:linkDebugFrameworkIosSimulatorArm64`
@@ -61,10 +66,14 @@
 - **Ktor server (host):** `./gradlew :sample-server:run` — listens on `http://127.0.0.1:8080`. The emulator uses `http://10.0.2.2:8080` (see `MovieConfig.BASE_URL` in `com.mockcat.sample.data`); for a physical device, use your machine’s LAN IP or `adb reverse tcp:8080 tcp:8080` and `http://127.0.0.1:8080`.
 - **App (MVVM):** `MoviesViewModelFactory` builds an `OkHttpClient` with `OkHttpClientFactory.create(context)` — that factory adds Chucker and **`MockcatOkHttpInterceptor`**. Feature code (`MainActivity`, `MoviesViewModel`, `MovieRepository`) does **not** use `MockcatStore`; the store only exists inside `OkHttpClientFactory` to satisfy the interceptor. The sample depends on `mockcat-api` + `mockcat-persistence` for that composition root. **Next step** when you want a UI: add `mockcat-ui` and start the editor with `MockcatUi.createLaunchIntent` (or equivalent) from an Activity/button — client code does not need to call the store. Hand-written Room migrations are deferred; `getMockcatDatabase` uses destructive fallback while schema is still moving. Packages: `data` (config, DTOs, `OkHttpClientFactory`, repository), `ui.movies` (ViewModel, screen), `ui.theme`.
 
-## `mockcat-ui` (Android)
+## `mockcat-ui` (Android) — mock **rules** editor
 
 - `MockcatUi.createLaunchIntent(context, newTaskOrDocument = true)` — public entry to `MockcatActivity` (declared in the library manifest, `android:exported="false"`; only your app’s package can start it unless you add a manifest `tools:node` / proxy activity).
 - Optional: `MockcatUi.createLaunchPendingIntent` for notifications.
+
+## `mockcat-logger-ui` (Compose MPP) — traffic **log** list
+
+- `HttpLogListScreen` — list of `LoggedHttpCall` (method, path, status or error). Host app supplies `List<LoggedHttpCall>` (e.g. from `InMemoryHttpLogStore` or `RoomHttpLogStore` via `observeLogs()`). Not the same module as the mock editor above.
 
 ## Gradle plugin (`com.mockcat.mockcat-gradle`)
 

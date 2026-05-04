@@ -18,6 +18,10 @@ dependencyResolutionManagement {
 include(
     ":mockcat-api",
     ":mockcat-persistence",
+    ":mockcat-logger",
+    ":mockcat-logger-persistence",
+    ":mockcat-logger-okhttp",
+    ":mockcat-logger-ui",
     ":mockcat-ui",
     ":mockcat-intercept-okhttp",
     ":mockcat-intercept-ktor",

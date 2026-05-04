@@ -28,8 +28,15 @@ jobs:
           :mockcat-api:compileAndroidMain
           :mockcat-persistence:compileDebugKotlinAndroid
           :mockcat-persistence:compileKotlinIosSimulatorArm64
+          :mockcat-logger:compileAndroidMain
+          :mockcat-logger:compileKotlinIosSimulatorArm64
+          :mockcat-logger-persistence:compileDebugKotlinAndroid
+          :mockcat-logger-persistence:compileKotlinIosSimulatorArm64
+          :mockcat-logger-okhttp:compileAndroidMain
+          :mockcat-logger-ui:compileAndroidMain
           :mockcat-gradle-plugin:build
           :mockcat-api:allTests
+          :mockcat-logger:allTests
 
   ios:
     if: false
