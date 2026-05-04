@@ -7,23 +7,56 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1D2C607FB718A80F3D2A1E1D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = "TEMP_562B52C3-B5F0-4D28-8FE7-323848B591D7" /* ContentView.swift */; };
-		4CB3D68F1CE840B7E7EBC6B4 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = "TEMP_A0D01EDA-EF05-4E73-A840-9FD0EF9F714D" /* Models.swift */; };
-		9358BD4E9268836E9EAE2D52 /* Api.swift in Sources */ = {isa = PBXBuildFile; fileRef = "TEMP_89896FC5-BF79-4648-BF6E-4B6C57774BC9" /* Api.swift */; };
-		C607500E75CAA55A7BB3DC7C /* MovieDetailScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = "TEMP_1E625741-8227-46CE-96C6-8461C18BEDD6" /* MovieDetailScreen.swift */; };
-		CE77CD1B83FA673610C60E13 /* MockcatSampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = "TEMP_08DA2A1B-6A2A-4503-ACF7-F6FA32AA3D11" /* MockcatSampleApp.swift */; };
+		15EA6D0F7249995AAC1A5B98 /* MockcatLoggerUrlSession.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 5277A6649621674FA28E2835 /* MockcatLoggerUrlSession.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		3A4818D87A86ED8CB75E8717 /* Api.swift in Sources */ = {isa = PBXBuildFile; fileRef = "TEMP_A874B75A-BDFD-4042-8521-C056C4911CE6" /* Api.swift */; };
+		3B115F25DF2FDC302C2D2344 /* MockcatLoggerUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97089EE29F8B33A7C256D270 /* MockcatLoggerUI.framework */; };
+		5D1297E4F370F5AABD2CC2CB /* MockcatLoggerUrlSession.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5277A6649621674FA28E2835 /* MockcatLoggerUrlSession.framework */; };
+		7AD6950D7AB454377097804B /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = "TEMP_DCC281A5-A638-4066-8557-B32A1B610D3F" /* Models.swift */; };
+		BA2CE52A8315F7A3C46D87A9 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = "TEMP_A61A80A4-4924-465B-A3CE-3127DFDCAA19" /* ContentView.swift */; };
+		BA6E7E0FD7BB16F796B218DC /* MockcatLoggerUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 97089EE29F8B33A7C256D270 /* MockcatLoggerUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CE787CD765A44AC0461BA283 /* MovieDetailScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = "TEMP_F684A68C-5331-43EB-98A4-AE168829BBB5" /* MovieDetailScreen.swift */; };
+		EACB53DB52455BF08B4D9CEF /* MockcatSampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = "TEMP_474B9008-7BAB-4888-94DE-1880817329F2" /* MockcatSampleApp.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		A1F6176251AB24D458920C00 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				BA6E7E0FD7BB16F796B218DC /* MockcatLoggerUI.framework in Embed Frameworks */,
+				15EA6D0F7249995AAC1A5B98 /* MockcatLoggerUrlSession.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		5277A6649621674FA28E2835 /* MockcatLoggerUrlSession.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MockcatLoggerUrlSession.framework; path = "../../mockcat-logger-urlsession/build/bin/iosSimulatorArm64/debugFramework/MockcatLoggerUrlSession.framework"; sourceTree = "<group>"; };
+		97089EE29F8B33A7C256D270 /* MockcatLoggerUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MockcatLoggerUI.framework; path = "../../mockcat-logger-ui/build/bin/iosSimulatorArm64/debugFramework/MockcatLoggerUI.framework"; sourceTree = "<group>"; };
 		98ECAF08CA06C0491B19A4BD /* MockcatSample.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = MockcatSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		"TEMP_08DA2A1B-6A2A-4503-ACF7-F6FA32AA3D11" /* MockcatSampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockcatSampleApp.swift; sourceTree = "<group>"; };
-		"TEMP_18B67072-B481-4C01-9CF8-B7184381862D" /* .gitignore */ = {isa = PBXFileReference; path = .gitignore; sourceTree = "<group>"; };
-		"TEMP_1E625741-8227-46CE-96C6-8461C18BEDD6" /* MovieDetailScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieDetailScreen.swift; sourceTree = "<group>"; };
-		"TEMP_562B52C3-B5F0-4D28-8FE7-323848B591D7" /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		"TEMP_68593090-E457-4D38-9B71-59E5E237D339" /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		"TEMP_89896FC5-BF79-4648-BF6E-4B6C57774BC9" /* Api.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Api.swift; sourceTree = "<group>"; };
-		"TEMP_A0D01EDA-EF05-4E73-A840-9FD0EF9F714D" /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		"TEMP_474B9008-7BAB-4888-94DE-1880817329F2" /* MockcatSampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockcatSampleApp.swift; sourceTree = "<group>"; };
+		"TEMP_A61A80A4-4924-465B-A3CE-3127DFDCAA19" /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		"TEMP_A874B75A-BDFD-4042-8521-C056C4911CE6" /* Api.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Api.swift; sourceTree = "<group>"; };
+		"TEMP_CDAE07B9-46DD-421A-8B07-282BA0CAFA2F" /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		"TEMP_DCC281A5-A638-4066-8557-B32A1B610D3F" /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		"TEMP_F26CCFB9-11F0-4532-8984-20ACEF6C400A" /* .gitignore */ = {isa = PBXFileReference; path = .gitignore; sourceTree = "<group>"; };
+		"TEMP_F684A68C-5331-43EB-98A4-AE168829BBB5" /* MovieDetailScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieDetailScreen.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D3C2D0E5C9CFBDC1D7A6E89F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3B115F25DF2FDC302C2D2344 /* MockcatLoggerUI.framework in Frameworks */,
+				5D1297E4F370F5AABD2CC2CB /* MockcatLoggerUrlSession.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		50DF813B9E07E676D8EE1089 /* Products */ = {
@@ -37,20 +70,30 @@
 		C9A57FD96572E84CBC6E2B09 = {
 			isa = PBXGroup;
 			children = (
+				F44B2F505BCBFBC9364B6A92 /* Frameworks */,
 				50DF813B9E07E676D8EE1089 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		"TEMP_A88A3C55-9451-4303-8E49-C01DE61E7E7C" /* . */ = {
+		F44B2F505BCBFBC9364B6A92 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				"TEMP_1E625741-8227-46CE-96C6-8461C18BEDD6" /* MovieDetailScreen.swift */,
-				"TEMP_18B67072-B481-4C01-9CF8-B7184381862D" /* .gitignore */,
-				"TEMP_08DA2A1B-6A2A-4503-ACF7-F6FA32AA3D11" /* MockcatSampleApp.swift */,
-				"TEMP_A0D01EDA-EF05-4E73-A840-9FD0EF9F714D" /* Models.swift */,
-				"TEMP_89896FC5-BF79-4648-BF6E-4B6C57774BC9" /* Api.swift */,
-				"TEMP_562B52C3-B5F0-4D28-8FE7-323848B591D7" /* ContentView.swift */,
-				"TEMP_68593090-E457-4D38-9B71-59E5E237D339" /* Info.plist */,
+				97089EE29F8B33A7C256D270 /* MockcatLoggerUI.framework */,
+				5277A6649621674FA28E2835 /* MockcatLoggerUrlSession.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		"TEMP_322201DB-C646-4A44-8BC5-CDC386562B77" /* . */ = {
+			isa = PBXGroup;
+			children = (
+				"TEMP_F684A68C-5331-43EB-98A4-AE168829BBB5" /* MovieDetailScreen.swift */,
+				"TEMP_F26CCFB9-11F0-4532-8984-20ACEF6C400A" /* .gitignore */,
+				"TEMP_474B9008-7BAB-4888-94DE-1880817329F2" /* MockcatSampleApp.swift */,
+				"TEMP_DCC281A5-A638-4066-8557-B32A1B610D3F" /* Models.swift */,
+				"TEMP_A874B75A-BDFD-4042-8521-C056C4911CE6" /* Api.swift */,
+				"TEMP_A61A80A4-4924-465B-A3CE-3127DFDCAA19" /* ContentView.swift */,
+				"TEMP_CDAE07B9-46DD-421A-8B07-282BA0CAFA2F" /* Info.plist */,
 			);
 			name = .;
 			path = .;
@@ -65,6 +108,8 @@
 			buildPhases = (
 				2F4F38EEF697932B57318E82 /* Link KMP (Gradle) */,
 				1377D567F609E3038C61E118 /* Sources */,
+				D3C2D0E5C9CFBDC1D7A6E89F /* Frameworks */,
+				A1F6176251AB24D458920C00 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -134,11 +179,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9358BD4E9268836E9EAE2D52 /* Api.swift in Sources */,
-				1D2C607FB718A80F3D2A1E1D /* ContentView.swift in Sources */,
-				CE77CD1B83FA673610C60E13 /* MockcatSampleApp.swift in Sources */,
-				4CB3D68F1CE840B7E7EBC6B4 /* Models.swift in Sources */,
-				C607500E75CAA55A7BB3DC7C /* MovieDetailScreen.swift in Sources */,
+				3A4818D87A86ED8CB75E8717 /* Api.swift in Sources */,
+				BA2CE52A8315F7A3C46D87A9 /* ContentView.swift in Sources */,
+				EACB53DB52455BF08B4D9CEF /* MockcatSampleApp.swift in Sources */,
+				7AD6950D7AB454377097804B /* Models.swift in Sources */,
+				CE787CD765A44AC0461BA283 /* MovieDetailScreen.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -207,7 +252,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				FRAMEWORK_SEARCH_PATHS = "$(inherited) $(SRCROOT)/../../mockcat-logger-ui/build/bin/iosSimulatorArm64/debugFramework $(SRCROOT)/../../mockcat-logger-urlsession/build/bin/iosSimulatorArm64/debugFramework";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited) $(SRCROOT)/../../mockcat-logger-ui/build/bin/iosSimulatorArm64/debugFramework $(SRCROOT)/../../mockcat-logger-urlsession/build/bin/iosSimulatorArm64/debugFramework",
+					"\"../../mockcat-logger-ui/build/bin/iosSimulatorArm64/debugFramework\"",
+					"\"../../mockcat-logger-urlsession/build/bin/iosSimulatorArm64/debugFramework\"",
+				);
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -225,7 +274,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				FRAMEWORK_SEARCH_PATHS = "$(inherited) $(SRCROOT)/../../mockcat-logger-ui/build/bin/iosSimulatorArm64/debugFramework $(SRCROOT)/../../mockcat-logger-urlsession/build/bin/iosSimulatorArm64/debugFramework";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited) $(SRCROOT)/../../mockcat-logger-ui/build/bin/iosSimulatorArm64/debugFramework $(SRCROOT)/../../mockcat-logger-urlsession/build/bin/iosSimulatorArm64/debugFramework",
+					"\"../../mockcat-logger-ui/build/bin/iosSimulatorArm64/debugFramework\"",
+					"\"../../mockcat-logger-urlsession/build/bin/iosSimulatorArm64/debugFramework\"",
+				);
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
