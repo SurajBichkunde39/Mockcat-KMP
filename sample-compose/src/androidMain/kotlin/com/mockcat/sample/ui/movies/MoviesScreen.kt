@@ -72,7 +72,7 @@ fun MoviesScreen(
                 val subtitle = when (clientKind) {
                     ClientKind.OkHttp -> "Stack: OkHttp (Mockcat + Chucker + HTTP log)"
                     ClientKind.Ktor ->
-                        "Stack: Ktor client. HTTP log is OkHttp–based; Ktor path may be empty or partial."
+                        "Stack: Ktor (OkHttp engine) + mockcat-logger-ktor. Logger shows the same HTTP log store."
                 }
                 LargeTopAppBar(
                     title = {

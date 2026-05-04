@@ -26,7 +26,9 @@ class MoviesViewModelFactory(
                 OkHttpMovieRepository(client)
             }
             ClientKind.Ktor -> {
-                KtorMovieRepository(KtorClientFactory.create())
+                KtorMovieRepository(
+                    KtorClientFactory.create(application.applicationContext),
+                )
             }
         }
         return MoviesViewModel(repository) as T

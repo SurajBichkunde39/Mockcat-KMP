@@ -14,6 +14,7 @@ kotlin {
             dependencies {
                 // [OkHttpClientFactory] / [MockcatLogging] — registers [HttpLogReader] for [MockcatLoggerUi] log activity.
                 implementation(project(":mockcat-okhttp-android"))
+                implementation(project(":mockcat-logger-ktor"))
                 implementation(project(":mockcat-logger-ui"))
                 implementation(libs.androidx.navigation3.runtime)
                 implementation(libs.androidx.navigation3.ui)
