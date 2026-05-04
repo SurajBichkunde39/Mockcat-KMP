@@ -24,6 +24,7 @@ targets:
     sources:
       - path: .
         excludes:
+          - build
           - README.md
           - project.yml
           - MockcatSample.xcodeproj
