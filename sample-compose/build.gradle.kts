@@ -12,14 +12,21 @@ kotlin {
     sourceSets {
         val androidMain by getting {
             dependencies {
+                // [OkHttpClientFactory] is the only app source that touches the store; UI/ViewModel do not.
                 implementation(project(":mockcat-api"))
                 implementation(project(":mockcat-persistence"))
-                implementation(project(":mockcat-ui"))
                 implementation(project(":mockcat-intercept-okhttp"))
                 implementation(libs.androidxActivityCompose)
+                implementation(libs.androidx.lifecycle.viewmodel.compose)
+                implementation(libs.androidx.lifecycle.viewmodel.ktx)
+                implementation(libs.androidx.lifecycle.runtime.compose)
                 implementation(libs.composeMaterial3)
+                implementation(libs.composeFoundation)
                 implementation(libs.composeUi)
                 implementation(libs.okhttp)
+                implementation(libs.kotlinx.coroutines.core)
+                implementation(libs.kotlinx.serialization.json)
+                implementation(libs.chucker.library)
             }
         }
     }

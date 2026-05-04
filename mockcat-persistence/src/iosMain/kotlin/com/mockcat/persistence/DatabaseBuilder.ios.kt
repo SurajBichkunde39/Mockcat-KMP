@@ -1,6 +1,7 @@
 package com.mockcat.persistence
 
 import androidx.room.Room
+import com.mockcat.api.MockcatStore
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
@@ -22,7 +23,7 @@ fun getMockcatDatabaseBuilder(): androidx.room.RoomDatabase.Builder<MockcatDatab
     )
 }
 
-fun getMockcatStoreForIos(): RoomMockcatStore {
+fun getMockcatStoreForIos(): MockcatStore {
     val database = getMockcatDatabase(getMockcatDatabaseBuilder())
     return RoomMockcatStore(database)
 }

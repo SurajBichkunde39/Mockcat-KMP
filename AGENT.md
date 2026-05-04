@@ -6,7 +6,7 @@
 
 | Module | Role |
 |--------|------|
-| `mockcat-api` | Public types: `HttpRequestMetadata`, `MockEntry`, `MockcatStore`, `MockMatcher`, headers |
+| `mockcat-api` | `HttpRequestMetadata` (full `url` + `baseUrl` / `queryParameters`), `MockEntry` + optional `requiredQueryParams`, `MockcatStore`, `MockMatcher` |
 | `mockcat-persistence` | Room (KMP) + `RoomMockcatStore`, bundled SQLite, import/export JSON |
 | `mockcat-ui` | Compose Multiplatform UI + `MockcatViewModel` (manual wiring, **no DI framework in libraries**) |
 | `mockcat-intercept-okhttp` | `MockcatOkHttpInterceptor` |
@@ -14,7 +14,8 @@
 | `mockcat-intercept-urlsession` | iOS: `NSURLRequest` → `HttpRequestMetadata`, `runMockcatUrlSessionResolve` for `URLProtocol` / Swift |
 | `mockcat-integration-chucker` | Android: Chucker share text parser for import |
 | `mockcat-gradle-plugin` | JVM plugin: ADB + broadcast import task (consumers register/configure) |
-| `sample-compose` | Android sample app (OkHttp demo + Mockcat UI) |
+| `sample-compose` | Android sample: movies list/detail, OkHttp + `MockcatOkHttpInterceptor`, Chucker, Ktor demo server |
+| `sample-server` | JVM Ktor app: serves `GET /api/movies` and `GET /api/movies/{imdbId}` from `films.json` (port 8080) |
 | `iosApp/MockcatSample` | Native SwiftUI sources (Xcode project you create; link KMP frameworks) |
 
 ## Conventions
@@ -52,12 +53,18 @@
 ## iOS sample (Swift)
 
 - **Sources:** `iosApp/MockcatSample/`. There is no checked-in `.xcodeproj`—create an iOS app target in Xcode, add these Swift files, and link the three frameworks from Gradle.
-- **Kotlin:** `getMockcatStoreForIos()` in `mockcat-persistence`, `RunMockcatUrlSessionResolve` / `toHttpRequestMetadata` in `mockcat-intercept-urlsession` for a Swift `URLProtocol` implementation.
+- **Kotlin:** `getMockcatStoreForIos(): MockcatStore` in `mockcat-persistence`, `RunMockcatUrlSessionResolve` / `toHttpRequestMetadata` in `mockcat-intercept-urlsession` for a Swift `URLProtocol` implementation. Put the full URL (including `?query`) in `HttpRequestMetadata.url` so `baseUrl` / `queryParameters` match OkHttp.
 - **URLSession:** set `URLSessionConfiguration.protocolClasses` to your `URLProtocol` **before** creating a `URLSession` that should see mocks.
 
 ## Android `sample-compose`
 
-- `OkHttpSample` + `MainActivity` use `MockcatOkHttpInterceptor` with a dedicated demo URL; the UI adds a static mock in `LaunchedEffect` so the request is short-circuited without hitting the network.
+- **Ktor server (host):** `./gradlew :sample-server:run` — listens on `http://127.0.0.1:8080`. The emulator uses `http://10.0.2.2:8080` (see `MovieConfig.BASE_URL` in `com.mockcat.sample.data`); for a physical device, use your machine’s LAN IP or `adb reverse tcp:8080 tcp:8080` and `http://127.0.0.1:8080`.
+- **App (MVVM):** `MoviesViewModelFactory` builds an `OkHttpClient` with `OkHttpClientFactory.create(context)` — that factory adds Chucker and **`MockcatOkHttpInterceptor`**. Feature code (`MainActivity`, `MoviesViewModel`, `MovieRepository`) does **not** use `MockcatStore`; the store only exists inside `OkHttpClientFactory` to satisfy the interceptor. The sample depends on `mockcat-api` + `mockcat-persistence` for that composition root. **Next step** when you want a UI: add `mockcat-ui` and start the editor with `MockcatUi.createLaunchIntent` (or equivalent) from an Activity/button — client code does not need to call the store. Hand-written Room migrations are deferred; `getMockcatDatabase` uses destructive fallback while schema is still moving. Packages: `data` (config, DTOs, `OkHttpClientFactory`, repository), `ui.movies` (ViewModel, screen), `ui.theme`.
+
+## `mockcat-ui` (Android)
+
+- `MockcatUi.createLaunchIntent(context, newTaskOrDocument = true)` — public entry to `MockcatActivity` (declared in the library manifest, `android:exported="false"`; only your app’s package can start it unless you add a manifest `tools:node` / proxy activity).
+- Optional: `MockcatUi.createLaunchPendingIntent` for notifications.
 
 ## Gradle plugin (`com.mockcat.mockcat-gradle`)
 

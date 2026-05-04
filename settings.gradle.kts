@@ -25,4 +25,5 @@ include(
     ":mockcat-integration-chucker",
     ":mockcat-gradle-plugin",
     ":sample-compose",
+    ":sample-server",
 )

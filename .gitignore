@@ -15,4 +15,5 @@ Pods/
 **/*.xcuserstate
 .kotlin/
 reports/
+ThoughtsLogging/
 old_impl/

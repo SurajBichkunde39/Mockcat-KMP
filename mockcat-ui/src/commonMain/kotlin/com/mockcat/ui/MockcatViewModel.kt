@@ -3,6 +3,8 @@ package com.mockcat.ui
 import com.mockcat.api.MockEntry
 import com.mockcat.api.MockType
 import com.mockcat.api.MockcatStore
+import com.mockcat.api.buildHttpUrl
+import com.mockcat.api.splitHttpUrl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -89,7 +91,7 @@ data class MockFormState(
 
         fun from(e: MockEntry) = MockFormState(
             id = e.id,
-            url = e.url,
+            url = buildHttpUrl(e.url, e.requiredQueryParams),
             label = e.label,
             method = e.httpMethod,
             isEnabled = e.isEnabled,
@@ -101,17 +103,21 @@ data class MockFormState(
         )
     }
 
-    fun toEntry(): MockEntry = MockEntry(
-        id = id,
-        url = url.trim(),
-        label = label.trim(),
-        httpMethod = method.trim().uppercase(),
-        isEnabled = isEnabled,
-        mockType = mockType,
-        responseCode = responseCode.toIntOrNull(),
-        responseBody = responseBody.ifBlank { null },
-        delayMs = delayMs.toLongOrNull(),
-        redirectUrl = redirectUrl.ifBlank { null },
-        requiredHeaders = null,
-    )
+    fun toEntry(): MockEntry {
+        val (base, q) = splitHttpUrl(url.trim())
+        return MockEntry(
+            id = id,
+            url = base,
+            label = label.trim(),
+            httpMethod = method.trim().uppercase(),
+            isEnabled = isEnabled,
+            mockType = mockType,
+            responseCode = responseCode.toIntOrNull(),
+            responseBody = responseBody.ifBlank { null },
+            delayMs = delayMs.toLongOrNull(),
+            redirectUrl = redirectUrl.ifBlank { null },
+            requiredHeaders = null,
+            requiredQueryParams = if (q.isEmpty()) null else q,
+        )
+    }
 }

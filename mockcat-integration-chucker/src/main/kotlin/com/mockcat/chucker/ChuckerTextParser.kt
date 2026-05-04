@@ -2,6 +2,7 @@ package com.mockcat.chucker
 
 import com.mockcat.api.MockEntry
 import com.mockcat.api.MockType
+import com.mockcat.api.splitHttpUrl
 
 class ChuckerParseException(message: String) : Exception(message)
 
@@ -31,8 +32,10 @@ object ChuckerTextParser {
         if (responseBody.isBlank() || responseBody == "(body is empty)") {
             throw ChuckerParseException("Cannot import a transaction with an empty or omitted response body.")
         }
+        val (base, q) = splitHttpUrl(url)
         return MockEntry(
-            url = url,
+            url = base,
+            requiredQueryParams = if (q.isEmpty()) null else q,
             label = "Imported from Chucker @${System.currentTimeMillis()}",
             httpMethod = method,
             responseCode = responseCode,

@@ -18,4 +18,5 @@ data class MockEntity(
     val delayMs: Long? = null,
     val redirectUrl: String? = null,
     val requiredHeaders: Map<String, String>? = null,
+    val requiredQueryParams: Map<String, String>? = null,
 )

@@ -51,12 +51,12 @@ class RoomMockcatStore(
     }
 
     override suspend fun findMatchingMockCandidates(
-        url: String,
-        method: String,
-    ): List<MockEntry> = dao.findMatchingMockCandidates(url, method).map { it.toEntry() }
+        urlWithoutQuery: String,
+        httpMethod: String,
+    ): List<MockEntry> = dao.findMatchingMockCandidates(urlWithoutQuery, httpMethod).map { it.toEntry() }
 
-    override suspend fun importFromJsonReplaceAll(jsonPayload: String): Int {
-        val fileEntries = importJson.decodeFromString<MultipleMockEntries>(jsonPayload).entries
+    override suspend fun importFromJsonReplaceAll(json: String): Int {
+        val fileEntries = importJson.decodeFromString<MultipleMockEntries>(json).entries
         val rows = fileEntries.map { it.toEntry().toEntity() }
         dao.importReplace(rows)
         return fileEntries.size
@@ -89,5 +89,6 @@ private fun MockEntry.toFileEntry(): MockFileEntry {
         delayMs = delayMs,
         redirectUrl = redirectUrl,
         requiredHeaders = requiredHeaders,
+        requiredQueryParams = requiredQueryParams,
     )
 }

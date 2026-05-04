@@ -2,6 +2,7 @@ package com.mockcat.persistence
 
 import android.content.Context
 import androidx.room.Room
+import com.mockcat.api.MockcatStore
 
 fun getMockcatDatabaseBuilder(context: Context): androidx.room.RoomDatabase.Builder<MockcatDatabase> {
     val appContext = context.applicationContext
@@ -12,7 +13,7 @@ fun getMockcatDatabaseBuilder(context: Context): androidx.room.RoomDatabase.Buil
     )
 }
 
-fun getMockcatStoreForAndroid(context: Context): RoomMockcatStore {
+fun getMockcatStoreForAndroid(context: Context): MockcatStore {
     val database = getMockcatDatabase(getMockcatDatabaseBuilder(context))
     return RoomMockcatStore(database)
 }

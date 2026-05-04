@@ -17,9 +17,12 @@ interface MockcatStore {
 
     suspend fun deleteAll()
 
+    /**
+     * Returns enabled mocks for [urlWithoutQuery] and [httpMethod] (query matching is left to [com.mockcat.api.MockMatcher]).
+     */
     suspend fun findMatchingMockCandidates(
-        url: String,
-        method: String,
+        urlWithoutQuery: String,
+        httpMethod: String,
     ): List<MockEntry>
 
     suspend fun importFromJsonReplaceAll(json: String): Int
@@ -34,7 +37,7 @@ suspend fun MockcatStore.resolveWithMatcher(request: HttpRequestMetadata): Mockc
     if (request.headerValue(MockcatHeaders.REDIRECT_MARKER) != null) {
         return MockcatResult.PassThrough
     }
-    val candidates = findMatchingMockCandidates(request.url, request.method)
+    val candidates = findMatchingMockCandidates(request.baseUrl, request.method)
     val mock = MockMatcher.findBestMatch(request, candidates) ?: return MockcatResult.PassThrough
     return MockMatcher.toResult(request, mock)
 }

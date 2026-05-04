@@ -24,10 +24,12 @@ jobs:
           ktlintCheck
           detekt
           :sample-compose:assembleDebug
+          :sample-server:compileKotlin
           :mockcat-api:compileAndroidMain
           :mockcat-persistence:compileDebugKotlinAndroid
           :mockcat-persistence:compileKotlinIosSimulatorArm64
           :mockcat-gradle-plugin:build
+          :mockcat-api:allTests
 
   ios:
     if: false

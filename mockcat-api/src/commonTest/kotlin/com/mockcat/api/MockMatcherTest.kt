@@ -51,7 +51,7 @@ class MockMatcherTest {
                 responseBody = "{ }",
                 delayMs = 0,
             )
-        val res = MockMatcher.toResult(HttpRequestMetadata("u", "GET"), m)
+        val res = MockMatcher.toResult(HttpRequestMetadata("https://u", "GET"), m)
         assertTrue(res is MockcatResult.ApplyStatic)
         assertEquals(201, res.statusCode)
     }
@@ -73,7 +73,41 @@ class MockMatcherTest {
                 mockType = MockType.REDIRECT,
                 redirectUrl = " ",
             )
-        val res = MockMatcher.toResult(HttpRequestMetadata("u", "GET"), m)
+        val res = MockMatcher.toResult(HttpRequestMetadata("https://u", "GET"), m)
         assertTrue(res is MockcatResult.Error)
+    }
+
+    @Test
+    fun stricterQueryParamsWin() {
+        val r = HttpRequestMetadata("https://a.test/movies?cat=1&view=list", "GET", emptyList())
+        val wide =
+            MockEntry(
+                id = 1L,
+                url = "https://a.test/movies",
+                httpMethod = "GET",
+                requiredQueryParams = null,
+            )
+        val strict =
+            MockEntry(
+                id = 2L,
+                url = "https://a.test/movies",
+                httpMethod = "GET",
+                requiredQueryParams = mapOf("cat" to "1", "view" to "list"),
+            )
+        val m = MockMatcher.findBestMatch(r, listOf(wide, strict))
+        assertEquals(2L, m?.id)
+    }
+
+    @Test
+    fun noMatchWhenQueryMismatch() {
+        val r = HttpRequestMetadata("https://a/b?x=1", "GET", emptyList())
+        val m =
+            MockEntry(
+                id = 1L,
+                url = "https://a/b",
+                httpMethod = "GET",
+                requiredQueryParams = mapOf("x" to "2"),
+            )
+        assertNull(MockMatcher.findBestMatch(r, listOf(m)))
     }
 }

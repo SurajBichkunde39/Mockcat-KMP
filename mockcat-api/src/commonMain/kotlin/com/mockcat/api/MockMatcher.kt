@@ -2,8 +2,8 @@ package com.mockcat.api
 
 object MockMatcher {
     /**
-     * Picks the best [MockEntry] for this request. Stricter required header sets win
-     * (more header keys first), same as the original Android app.
+     * Picks the best [MockEntry] for this request. Stricter required header + query sets win
+     * (larger total constraint count), same as the original header-only rule.
      */
     fun findBestMatch(
         request: HttpRequestMetadata,
@@ -12,16 +12,32 @@ object MockMatcher {
         if (candidates.isEmpty()) {
             return null
         }
-        val sorted = candidates.sortedByDescending { it.requiredHeaders?.size ?: 0 }
-        return sorted.firstOrNull { mock ->
-            if (mock.requiredHeaders.isNullOrEmpty()) {
-                true
-            } else {
-                mock.requiredHeaders.all { (key, requiredValue) ->
-                    request.headerValue(key) == requiredValue
-                }
-            }
+        val sorted =
+            candidates
+                .filter { headerMatches(request, it) && queryMatches(request, it) }
+                .sortedByDescending { (it.requiredHeaders?.size ?: 0) + (it.requiredQueryParams?.size ?: 0) }
+        return sorted.firstOrNull()
+    }
+
+    private fun headerMatches(
+        request: HttpRequestMetadata,
+        mock: MockEntry,
+    ): Boolean {
+        if (mock.requiredHeaders.isNullOrEmpty()) {
+            return true
         }
+        return mock.requiredHeaders.all { (key, requiredValue) -> request.headerValue(key) == requiredValue }
+    }
+
+    private fun queryMatches(
+        request: HttpRequestMetadata,
+        mock: MockEntry,
+    ): Boolean {
+        if (mock.requiredQueryParams.isNullOrEmpty()) {
+            return true
+        }
+        val reqQ = request.queryParameters
+        return mock.requiredQueryParams.all { (key, v) -> reqQ[key] == v }
     }
 
     /**

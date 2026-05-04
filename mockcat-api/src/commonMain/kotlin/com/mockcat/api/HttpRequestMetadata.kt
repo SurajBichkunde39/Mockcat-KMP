@@ -2,7 +2,8 @@ package com.mockcat.api
 
 /**
  * Portable snapshot of a single outbound HTTP call for mock matching and rules.
- * Header keys are compared in a case-insensitive way in [headerValue].
+ * - [url] is the full URL string, including a `?` query if present. Use [baseUrl] and [queryParameters] for rules.
+ * - Header keys are compared in a case-insensitive way in [headerValue].
  */
 data class HttpRequestMetadata(
     val url: String,
