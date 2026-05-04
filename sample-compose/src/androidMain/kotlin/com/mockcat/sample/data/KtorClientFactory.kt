@@ -1,6 +1,7 @@
 package com.mockcat.sample.data
 
 import android.content.Context
+import com.mockcat.intercept.ktor.installMockcatKtorIntercept
 import com.mockcat.logger.ktor.installMockcatKtorHttpLogging
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
@@ -11,9 +12,11 @@ import kotlinx.serialization.json.Json
 
 object KtorClientFactory {
     /**
-     * Ktor [HttpClient] (OkHttp engine) with JSON and mockcat's Ktor HTTP logger.
+     * Ktor [HttpClient] (OkHttp engine) with JSON, mock resolution ([installMockcatKtorIntercept]), then HTTP logging
+     * ([installMockcatKtorHttpLogging]) so logs reflect the final status and body (including static mocks).
      */
     fun create(appContext: Context): HttpClient = HttpClient(OkHttp) {
+        installMockcatKtorIntercept(appContext)
         installMockcatKtorHttpLogging(appContext)
         install(HttpTimeout) {
             requestTimeoutMillis = 30_000

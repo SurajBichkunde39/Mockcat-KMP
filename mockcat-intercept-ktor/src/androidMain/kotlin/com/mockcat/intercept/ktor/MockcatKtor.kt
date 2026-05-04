@@ -3,6 +3,7 @@ package com.mockcat.intercept.ktor
 import com.mockcat.api.MockcatStore
 import com.mockcat.intercept.okhttp.MockcatOkHttpInterceptor
 import io.ktor.client.HttpClient
+import io.ktor.client.HttpClientConfig
 import io.ktor.client.engine.okhttp.OkHttp
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
@@ -15,7 +16,7 @@ object MockcatKtor {
     @Suppress("MagicNumber")
     fun createHttpClient(
         store: MockcatStore,
-        configure: HttpClient.() -> Unit = {},
+        configure: HttpClientConfig<*>.() -> Unit = {},
     ): HttpClient {
         val mockcat = MockcatOkHttpInterceptor(store)
         val engineClient =

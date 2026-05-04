@@ -35,6 +35,8 @@ jobs:
           :mockcat-logger-persistence:compileKotlinIosSimulatorArm64
           :mockcat-logger-okhttp:compileAndroidMain
           :mockcat-intercept-okhttp:compileAndroidMain
+          :mockcat-intercept-ktor:compileKotlinJvm
+          :mockcat-intercept-ktor:compileAndroidMain
           :mockcat-logger-ui:compileAndroidMain
           :mockcat-logger-ui:compileKotlinIosSimulatorArm64
           :mockcat-gradle-plugin:build

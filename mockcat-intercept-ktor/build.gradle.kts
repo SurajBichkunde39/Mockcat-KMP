@@ -8,6 +8,7 @@ plugins {
     `maven-publish`
 }
 kotlin {
+    jvm { }
     android {
         namespace = "com.mockcat.intercept.ktor"
         compileSdk = libs.versions.androidCompileSdk.get().toInt()
@@ -15,11 +16,17 @@ kotlin {
         compilerOptions { jvmTarget.set(JvmTarget.JVM_17) }
     }
     sourceSets {
-        val androidMain by getting {
+        val commonMain by getting {
             dependencies {
                 implementation(project(":mockcat-api"))
-                implementation(project(":mockcat-intercept-okhttp"))
                 implementation(libs.ktorClientCore)
+                implementation(libs.kotlinx.coroutines.core)
+            }
+        }
+        val androidMain by getting {
+            dependencies {
+                implementation(project(":mockcat-intercept-okhttp"))
+                implementation(project(":mockcat-intercept-persistence"))
                 implementation(libs.ktorClientOkhttp)
             }
         }

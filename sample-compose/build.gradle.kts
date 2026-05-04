@@ -16,6 +16,7 @@ kotlin {
                 implementation(project(":mockcat-logger-okhttp"))
                 implementation(project(":mockcat-intercept-okhttp"))
                 implementation(project(":mockcat-logger-ktor"))
+                implementation(project(":mockcat-intercept-ktor"))
                 implementation(project(":mockcat-logger-ui"))
                 implementation(project(":mockcat-intercept-ui"))
                 implementation(libs.androidx.navigation3.runtime)
