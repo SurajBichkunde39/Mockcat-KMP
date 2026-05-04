@@ -6,8 +6,12 @@ plugins {
 }
 kotlin {
     applyDefaultHierarchyTemplate()
-    iosArm64()
-    iosSimulatorArm64()
+    listOf(
+        iosArm64(),
+        iosSimulatorArm64(),
+    ).forEach { target ->
+        target.binaries.framework { baseName = "MockcatInterceptUrlsession" }
+    }
     sourceSets {
         val iosMain by getting {
             dependencies {

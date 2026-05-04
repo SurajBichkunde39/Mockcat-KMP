@@ -11,6 +11,7 @@ import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
+import org.gradle.process.ExecSpec
 import java.io.File
 import javax.inject.Inject
 
@@ -61,9 +62,7 @@ abstract class MockcatImportTask : DefaultTask() {
         val tmp = File.createTempFile("mockcat", ".json")
         tmp.writeText(payload, Charsets.UTF_8)
         try {
-            execOperations.exec {
-                commandLine(adb, "push", tmp.absolutePath, remote)
-            }
+            execOperations.exec { e: ExecSpec -> e.setCommandLine(adb, "push", tmp.absolutePath, remote) }
             val cmd =
                 buildList {
                     add(adb)
@@ -79,12 +78,12 @@ abstract class MockcatImportTask : DefaultTask() {
                     add(remote)
                     add("--include-stopped-packages")
                 }
-            execOperations.exec { commandLine(cmd) }
+            execOperations.exec { e: ExecSpec -> e.setCommandLine(cmd) }
         } finally {
             tmp.delete()
-            execOperations.exec {
-                commandLine(adb, "shell", "rm", remote)
-                isIgnoreExitValue = true
+            execOperations.exec { e: ExecSpec ->
+                e.setCommandLine(adb, "shell", "rm", remote)
+                e.isIgnoreExitValue = true
             }
         }
     }

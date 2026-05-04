@@ -57,6 +57,13 @@ class MockMatcherTest {
     }
 
     @Test
+    fun headerValueIsCaseInsensitive() {
+        val r =
+            HttpRequestMetadata("https://a", "GET", listOf("X-Custom" to "alpha"))
+        assertEquals("alpha", r.headerValue("x-custom"))
+    }
+
+    @Test
     fun toResultInvalidRedirect() {
         val m =
             MockEntry(

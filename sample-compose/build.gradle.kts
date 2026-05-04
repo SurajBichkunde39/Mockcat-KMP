@@ -15,9 +15,11 @@ kotlin {
                 implementation(project(":mockcat-api"))
                 implementation(project(":mockcat-persistence"))
                 implementation(project(":mockcat-ui"))
+                implementation(project(":mockcat-intercept-okhttp"))
                 implementation(libs.androidxActivityCompose)
                 implementation(libs.composeMaterial3)
                 implementation(libs.composeUi)
+                implementation(libs.okhttp)
             }
         }
     }

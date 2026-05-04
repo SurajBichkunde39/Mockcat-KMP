@@ -1,3 +1,8 @@
+/**
+ * Stays on `com.android.library` + [androidTarget] for now: the `androidx.room` Gradle plugin
+ * does not support `com.android.kotlin.multiplatform.library` (see AGENT.md). KSP + Room for
+ * common `expect/actual` still use the Room plugin + `kspAndroid` / `kspIos*`.
+ */
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.library)
@@ -10,8 +15,12 @@ plugins {
 }
 kotlin {
     androidTarget { publishAllLibraryVariants() }
-    iosArm64()
-    iosSimulatorArm64()
+    listOf(
+        iosArm64(),
+        iosSimulatorArm64(),
+    ).forEach { target ->
+        target.binaries.framework { baseName = "MockcatPersistence" }
+    }
     sourceSets {
         all { languageSettings { optIn("kotlin.RequiresOptIn") } }
         val commonMain by getting {
@@ -26,7 +35,6 @@ kotlin {
         val commonTest by getting {
             dependencies { implementation(kotlin("test")) }
         }
-        val androidUnitTest by getting
     }
 }
 room {

@@ -3,6 +3,9 @@ package com.mockcat.sample
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.Modifier
 import com.mockcat.persistence.getMockcatStoreForAndroid
 import com.mockcat.ui.MockcatApp
 
@@ -11,7 +14,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val store = getMockcatStoreForAndroid(this)
         setContent {
-            MockcatApp(store = store)
+            Column(Modifier.fillMaxSize()) {
+                MockcatApp(store = store, modifier = Modifier.weight(1f))
+                OkHttpSample(store = store)
+            }
         }
     }
 }

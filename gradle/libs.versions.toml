@@ -2,7 +2,8 @@
 # Toolchain — keep Kotlin / KSP aligned (KSP: https://github.com/google/ksp/releases)
 agp = "9.1.1"
 kotlin = "2.2.21"
-ksp = "2.2.21-2.0.5"
+# 2.3+ supports AGP 9 + com.android.kotlin.multiplatform.library; see google/ksp#2476
+ksp = "2.3.7"
 # AndroidX
 room = "2.8.4"
 sqlite = "2.6.2"
@@ -32,6 +33,8 @@ androidx-activity = "1.11.0"
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+# https://developer.android.com/kotlin/multiplatform/plugin
+android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

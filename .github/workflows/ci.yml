@@ -1,0 +1,46 @@
+# Runs ktlint, detekt, Android :sample-compose:assembleDebug, and the KMP + iOS simulator
+# compile chain used in AGENT.md. macOS (for Xcode / iOS) is optional—enable when ready.
+name: ci
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  gradle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v3
+      - name: Check and assemble
+        run: >
+          ./gradlew --no-daemon
+          ktlintCheck
+          detekt
+          :sample-compose:assembleDebug
+          :mockcat-api:compileAndroidMain
+          :mockcat-persistence:compileDebugKotlinAndroid
+          :mockcat-persistence:compileKotlinIosSimulatorArm64
+          :mockcat-gradle-plugin:build
+
+  ios:
+    if: false
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v3
+      - name: Link iOS sim frameworks
+        run: |
+          ./gradlew :mockcat-api:linkDebugFrameworkIosSimulatorArm64 \
+            :mockcat-persistence:linkDebugFrameworkIosSimulatorArm64 \
+            :mockcat-intercept-urlsession:linkDebugFrameworkIosSimulatorArm64

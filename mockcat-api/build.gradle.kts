@@ -1,6 +1,8 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.android.library)
+    alias(libs.plugins.android.kotlin.multiplatform.library)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ktlint)
     alias(libs.plugins.detekt)
@@ -9,9 +11,18 @@ plugins {
 }
 kotlin {
     jvm { }
-    androidTarget { publishAllLibraryVariants() }
-    iosArm64()
-    iosSimulatorArm64()
+    android {
+        namespace = "com.mockcat.api"
+        compileSdk = libs.versions.androidCompileSdk.get().toInt()
+        minSdk = libs.versions.androidMinSdk.get().toInt()
+        compilerOptions { jvmTarget.set(JvmTarget.JVM_17) }
+    }
+    listOf(
+        iosArm64(),
+        iosSimulatorArm64(),
+    ).forEach { target ->
+        target.binaries.framework { baseName = "MockcatApi" }
+    }
     sourceSets {
         all { languageSettings { optIn("kotlin.RequiresOptIn") } }
         val commonMain by getting {
@@ -23,15 +34,6 @@ kotlin {
         val commonTest by getting {
             dependencies { implementation(kotlin("test")) }
         }
-    }
-}
-android {
-    namespace = "com.mockcat.api"
-    compileSdk = libs.versions.androidCompileSdk.get().toInt()
-    defaultConfig { minSdk = libs.versions.androidMinSdk.get().toInt() }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 detekt {
