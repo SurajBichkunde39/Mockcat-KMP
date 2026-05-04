@@ -61,7 +61,7 @@
 
 ## iOS sample (Swift)
 
-- **Sources:** `iosApp/MockcatSample/`. There is no checked-in `.xcodeproj`—create an iOS app target in Xcode, add these Swift files, and link the three frameworks from Gradle.
+- **Sources and Xcode project:** `iosApp/MockcatSample/` (includes **`MockcatSample.xcodeproj`**, `project.yml` for [XcodeGen](https://github.com/yonaskolb/XcodeGen) if you regenerate, and a pre-build **Gradle** step that links `MockcatLoggerUI` for the simulator). Open the project, pick an iPhone simulator, and run. See `iosApp/MockcatSample/README.md`.
 - **Kotlin:** `getMockcatStoreForIos(): MockcatStore` in `mockcat-persistence`, `RunMockcatUrlSessionResolve` / `toHttpRequestMetadata` in `mockcat-intercept-urlsession` for a Swift `URLProtocol` implementation. Put the full URL (including `?query`) in `HttpRequestMetadata.url` so `baseUrl` / `queryParameters` match OkHttp.
 - **HTTP log list (Chucker-style):** import the **`MockcatLoggerUI`** framework. At startup, call `installHttpLogReaderForIos()` (Kotlin) so the Room log store and `HttpLogReaderRegistry` are set up. Present the view from `createHttpLogListViewController()`. No `HttpLogReader` in app feature code. Until a URLSession / Ktor pipeline logs into the same store, the list may stay empty; the viewer is still valid.
 - **URLSession:** set `URLSessionConfiguration.protocolClasses` to your `URLProtocol` **before** creating a `URLSession` that should see mocks.
