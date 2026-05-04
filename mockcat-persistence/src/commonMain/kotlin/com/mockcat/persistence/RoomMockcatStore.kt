@@ -31,9 +31,7 @@ class RoomMockcatStore(
         }
     private val exportJson = Json { encodeDefaults = true }
 
-    override fun observeAllMocks(): Flow<List<MockEntry>> {
-        return dao.getAllMocks().map { list -> list.map { it.toEntry() } }
-    }
+    override fun observeAllMocks(): Flow<List<MockEntry>> = dao.getAllMocks().map { list -> list.map { it.toEntry() } }
 
     override suspend fun getAllMocksOnce(): List<MockEntry> = observeAllMocks().first()
 
@@ -55,9 +53,7 @@ class RoomMockcatStore(
     override suspend fun findMatchingMockCandidates(
         url: String,
         method: String,
-    ): List<MockEntry> {
-        return dao.findMatchingMockCandidates(url, method).map { it.toEntry() }
-    }
+    ): List<MockEntry> = dao.findMatchingMockCandidates(url, method).map { it.toEntry() }
 
     override suspend fun importFromJsonReplaceAll(jsonPayload: String): Int {
         val fileEntries = importJson.decodeFromString<MultipleMockEntries>(jsonPayload).entries
@@ -66,13 +62,11 @@ class RoomMockcatStore(
         return fileEntries.size
     }
 
-    override suspend fun exportAllToJson(): String {
-        return exportJson.encodeToString(
-            MultipleMockEntries(
-                entries = getAllMocksOnce().map { e: MockEntry -> e.toFileEntry() },
-            ),
-        )
-    }
+    override suspend fun exportAllToJson(): String = exportJson.encodeToString(
+        MultipleMockEntries(
+            entries = getAllMocksOnce().map { e: MockEntry -> e.toFileEntry() },
+        ),
+    )
 }
 
 private fun MockEntry.toFileEntry(): MockFileEntry {

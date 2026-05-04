@@ -24,9 +24,10 @@ kotlin {
 }
 android {
     namespace = "com.mockcat.sample"
-    compileSdk = 35
+    compileSdk = libs.versions.androidCompileSdk.get().toInt()
     defaultConfig {
-        minSdk = 24
+        minSdk = libs.versions.androidMinSdk.get().toInt()
+        targetSdk = libs.versions.androidTargetSdk.get().toInt()
         applicationId = "com.mockcat.sample"
         versionCode = 1
         versionName = "0.1.0"

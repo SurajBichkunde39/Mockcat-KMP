@@ -30,26 +30,23 @@ object MockMatcher {
     fun toResult(
         request: HttpRequestMetadata,
         mock: MockEntry,
-    ): MockcatResult {
-        return when (mock.mockType) {
-            MockType.STATIC -> {
-                MockcatResult.ApplyStatic(
-                    statusCode = mock.responseCode ?: 200,
-                    body = mock.responseBody.orEmpty(),
-                    contentType = "application/json",
-                    delayMs = mock.delayMs ?: 0L,
+    ): MockcatResult = when (mock.mockType) {
+        MockType.STATIC ->
+            MockcatResult.ApplyStatic(
+                statusCode = mock.responseCode ?: 200,
+                body = mock.responseBody.orEmpty(),
+                contentType = "application/json",
+                delayMs = mock.delayMs ?: 0L,
+            )
+        MockType.REDIRECT -> {
+            val u = mock.redirectUrl
+            if (u.isNullOrBlank()) {
+                MockcatResult.Error(
+                    statusCode = 598,
+                    message = "Mockcat Redirect Failed: The redirect URL for this mock is empty or null.",
                 )
-            }
-            MockType.REDIRECT -> {
-                val u = mock.redirectUrl
-                if (u.isNullOrBlank()) {
-                    MockcatResult.Error(
-                        statusCode = 598,
-                        message = "Mockcat Redirect Failed: The redirect URL for this mock is empty or null.",
-                    )
-                } else {
-                    MockcatResult.Redirect(u)
-                }
+            } else {
+                MockcatResult.Redirect(u)
             }
         }
     }

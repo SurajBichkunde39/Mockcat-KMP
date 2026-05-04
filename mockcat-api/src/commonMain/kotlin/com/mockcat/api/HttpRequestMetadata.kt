@@ -9,9 +9,7 @@ data class HttpRequestMetadata(
     val method: String,
     val headers: List<Pair<String, String>> = emptyList(),
 ) {
-    fun headerValue(name: String): String? {
-        return headers.find { (k, _) -> k.equals(name, ignoreCase = true) }?.second
-    }
+    fun headerValue(name: String): String? = headers.find { (k, _) -> k.equals(name, ignoreCase = true) }?.second
 }
 
 object MockcatHeaders {

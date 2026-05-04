@@ -18,7 +18,7 @@
 
 ## Conventions
 
-- **Kotlin** / **KSP** / **Room** versions are aligned in `gradle/libs.versions.toml` (KSP must match the Kotlin version). Room iOS klibs require a matching Kotlin native ABI.
+- **Tooling** (see `gradle/libs.versions.toml`): **Gradle 9.3.1**, **AGP 9.1.1**, **Kotlin 2.2.21** with matching **KSP**, **Room 2.8.4**, **Compose Multiplatform** plugin `1.10.3` with **Material3** on its own line (`composeMaterial3`, e.g. `1.10.0-alpha05` — JetBrains does not version Material3 in lockstep with the plugin). `gradle.properties` sets `android.builtInKotlin=false` and `android.newDsl=false` so existing KMP modules can keep `com.android.library` + `kotlin multiplatform` until you migrate to `com.android.kotlin.multiplatform.library` (required long-term for AGP 9+). **KSP** must match the Kotlin version; Room Apple klibs need a matching Kotlin/Native ABI.
 - **Quality**: `./gradlew ktlintCheck detekt` (and `ktlintFormat` as needed). Generated output is excluded from ktlint via a root `subprojects` ktlint `filter` with a `FileTreeElement` `exclude` that omits files whose path is under a `build/` directory. Root `.editorconfig` sets `ktlint_function_naming_ignore_when_annotated_with=Composable,Preview` for Compose.
 - **Libraries** stay free of Koin/Hilt/Dagger; apps/samples wire dependencies explicitly.
 - **Publishing**: several modules use `publishAllLibraryVariants()`; migrating to explicit `publishLibraryVariants` is a follow-up when publishing is finalized.

@@ -144,9 +144,8 @@ private fun FormContent(
     }
 }
 
-private fun String.toEnumOrDefault(): MockType =
-    try {
-        MockType.valueOf(this.trim().uppercase())
-    } catch (_: Exception) {
-        MockType.STATIC
-    }
+private fun String.toEnumOrDefault(): MockType = try {
+    MockType.valueOf(this.trim().uppercase())
+} catch (_: Exception) {
+    MockType.STATIC
+}

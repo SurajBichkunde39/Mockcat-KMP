@@ -93,16 +93,14 @@ abstract class MockcatImportTask : DefaultTask() {
     private fun parse(
         text: String,
         fileName: String,
-    ): List<MockFileEntry> {
-        return try {
-            json.decodeFromString<MultipleMockEntries>(text).entries
-        } catch (e1: Exception) {
-            try {
-                listOf(json.decodeFromString<MockFileEntry>(text))
-            } catch (e2: Exception) {
-                logger.error("Not valid mock file: $fileName: ${e1.message} / ${e2.message}")
-                emptyList()
-            }
+    ): List<MockFileEntry> = try {
+        json.decodeFromString<MultipleMockEntries>(text).entries
+    } catch (e1: Exception) {
+        try {
+            listOf(json.decodeFromString<MockFileEntry>(text))
+        } catch (e2: Exception) {
+            logger.error("Not valid mock file: $fileName: ${e1.message} / ${e2.message}")
+            emptyList()
         }
     }
 }

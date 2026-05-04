@@ -39,8 +39,8 @@ dependencies {
 }
 android {
     namespace = "com.mockcat.persistence"
-    compileSdk = 35
-    defaultConfig { minSdk = 24 }
+    compileSdk = libs.versions.androidCompileSdk.get().toInt()
+    defaultConfig { minSdk = libs.versions.androidMinSdk.get().toInt() }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17

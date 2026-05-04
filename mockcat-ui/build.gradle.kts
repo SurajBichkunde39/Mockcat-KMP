@@ -32,8 +32,8 @@ kotlin {
 }
 android {
     namespace = "com.mockcat.ui"
-    compileSdk = 35
-    defaultConfig { minSdk = 24 }
+    compileSdk = libs.versions.androidCompileSdk.get().toInt()
+    defaultConfig { minSdk = libs.versions.androidMinSdk.get().toInt() }
     buildFeatures { compose = true }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
