@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <activity
+            android:name="com.mockcat.logger.ui.HttpLogListActivity"
+            android:exported="false"
+            android:label="Mockcat HTTP log"
+            android:taskAffinity="com.mockcat.logger.ui.httplog"
+        />
+    </application>
+</manifest>

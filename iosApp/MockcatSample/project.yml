@@ -1,0 +1,36 @@
+# Generate the Xcode app with: brew install xcodegen && cd iosApp/MockcatSample && xcodegen generate
+# (The repo may already include MockcatSample.xcodeproj; regenerate after changing this file.)
+name: MockcatSample
+options:
+  bundleIdPrefix: com.mockcat
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+  developmentLanguage: en
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    TARGETED_DEVICE_FAMILY: "1,2"
+    IPHONEOS_DEPLOYMENT_TARGET: "16.0"
+targets:
+  MockcatSample:
+    type: application
+    platform: iOS
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.mockcat.MockcatSample
+      # Built by link_kmp.sh; simulator arm64 (Apple Silicon). For device, build iosArm64 and adjust path.
+      FRAMEWORK_SEARCH_PATHS: $(inherited) $(SRCROOT)/../../mockcat-logger-ui/build/bin/iosSimulatorArm64/debugFramework
+      OTHER_LDFLAGS: $(inherited) -framework MockcatLoggerUI
+    sources:
+      - path: .
+        excludes:
+          - README.md
+          - project.yml
+          - MockcatSample.xcodeproj
+          - link_kmp.sh
+    info:
+      path: Info.plist
+    preBuildScripts:
+      - name: Link KMP (Gradle)
+        path: link_kmp.sh
+        basedOnDependencyAnalysis: false

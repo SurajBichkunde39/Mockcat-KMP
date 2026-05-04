@@ -1,25 +1,51 @@
+import MockcatLoggerUI
 import SwiftUI
 
-/// 1) Build KMP frameworks from the repo (see [AGENT.md]).
-/// 2) In Xcode, add the produced `.framework` or `.xcframework` for `MockcatApi`,
-///    `MockcatPersistence`, and `MockcatInterceptUrlsession` and embed.
-/// 3) Implement a `URLProtocol` subclass that calls
-///    `RunMockcatUrlSessionResolve` with a `getMockcatStoreForIos()` store, or build
-///    [HttpRequestMetadata] in Swift and use the shared store API.
+/// `installHttpLogReaderForIos()` and `createHttpLogListViewController()` come from the
+/// `MockcatLoggerUI` framework (build with Gradle, see README in this folder).
 struct ContentView: View {
-    @State private var url: String = "https://example.com"
-    @State private var result: String = "Build frameworks and wire Mockcat; see AGENT.md."
+    @State private var showHttpLog = false
 
     var body: some View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 12) {
-                TextField("URL", text: $url)
-                    .textFieldStyle(.roundedBorder)
-                Button("Go (URLSession)") { /* wire URLSessionConfiguration.protocolClasses */ }
-                Text(result)
+                Text(
+                    "Build MockcatLoggerUI, embed in Xcode, then open the HTTP log. " +
+                        "The list is empty until traffic is written to the shared log store."
+                )
+                .font(.body)
+                Button("Open HTTP log") {
+                    showHttpLog = true
+                }
             }
             .padding()
             .navigationTitle("Mockcat (SwiftUI)")
         }
+        .onAppear(perform: {
+            // Top-level Kotlin file facades are exposed as *Kt types (see framework Headers/MockcatLoggerUI.h).
+            InstallHttpLogReaderForIosKt.installHttpLogReaderForIos()
+        })
+        .fullScreenCover(isPresented: $showHttpLog) {
+            NavigationStack {
+                HttpLogListViewControllerHost()
+                    .ignoresSafeArea()
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button("Close") {
+                                showHttpLog = false
+                            }
+                        }
+                    }
+            }
+        }
     }
+}
+
+/// Wraps the Compose `UIViewController` for SwiftUI.
+private struct HttpLogListViewControllerHost: UIViewControllerRepresentable {
+    func makeUIViewController(context: Context) -> UIViewController {
+        HttpLogListViewControllerKt.createHttpLogListViewController()
+    }
+
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }

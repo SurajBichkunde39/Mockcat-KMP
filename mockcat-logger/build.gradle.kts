@@ -28,6 +28,7 @@ kotlin {
             dependencies {
                 api(project(":mockcat-api"))
                 implementation(libs.kotlinx.coroutines.core)
+                implementation(libs.kotlinx.atomicfu)
             }
         }
         val commonTest by getting {

@@ -11,11 +11,21 @@ plugins {
     `maven-publish`
 }
 kotlin {
+    applyDefaultHierarchyTemplate()
     android {
         namespace = "com.mockcat.logger.ui"
         compileSdk = libs.versions.androidCompileSdk.get().toInt()
         minSdk = libs.versions.androidMinSdk.get().toInt()
         compilerOptions { jvmTarget.set(JvmTarget.JVM_17) }
+    }
+    listOf(
+        iosArm64(),
+        iosSimulatorArm64(),
+    ).forEach { target ->
+        target.binaries.framework {
+            baseName = "MockcatLoggerUI"
+            isStatic = true
+        }
     }
     sourceSets {
         val commonMain by getting {
@@ -27,6 +37,20 @@ kotlin {
                 implementation(libs.composeFoundation)
                 implementation(libs.composeUi)
                 implementation(libs.composeMaterial3)
+            }
+        }
+        val androidMain by getting {
+            dependencies {
+                implementation(libs.androidxActivityCompose)
+                implementation(libs.androidx.lifecycle.runtime.compose)
+            }
+        }
+        val iosMain by getting {
+            dependencies {
+                implementation(libs.composeUi)
+                implementation(libs.composeRuntime)
+                implementation(libs.composeMaterial3)
+                implementation(project(":mockcat-logger-persistence"))
             }
         }
     }

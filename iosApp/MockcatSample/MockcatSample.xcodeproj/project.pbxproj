@@ -1,0 +1,315 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		3E5A074029DDC917220E040C /* MockcatSampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = "TEMP_645B6C95-43AD-4C19-9236-F094015FE720" /* MockcatSampleApp.swift */; };
+		F27D3F4A949C00BED32F3734 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = "TEMP_BA686A3D-DFB2-473B-BDC0-01D64A045B1C" /* ContentView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		98ECAF08CA06C0491B19A4BD /* MockcatSample.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = MockcatSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		"TEMP_645B6C95-43AD-4C19-9236-F094015FE720" /* MockcatSampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockcatSampleApp.swift; sourceTree = "<group>"; };
+		"TEMP_BA686A3D-DFB2-473B-BDC0-01D64A045B1C" /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		"TEMP_F503E25C-9EE3-4A5B-9360-DF39EEF89287" /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		50DF813B9E07E676D8EE1089 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				98ECAF08CA06C0491B19A4BD /* MockcatSample.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C9A57FD96572E84CBC6E2B09 = {
+			isa = PBXGroup;
+			children = (
+				50DF813B9E07E676D8EE1089 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		"TEMP_BEB2E35E-9CAD-41EE-A730-85DAD0C51033" /* . */ = {
+			isa = PBXGroup;
+			children = (
+				"TEMP_645B6C95-43AD-4C19-9236-F094015FE720" /* MockcatSampleApp.swift */,
+				"TEMP_BA686A3D-DFB2-473B-BDC0-01D64A045B1C" /* ContentView.swift */,
+				"TEMP_F503E25C-9EE3-4A5B-9360-DF39EEF89287" /* Info.plist */,
+			);
+			name = .;
+			path = .;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		55F4386E47C8ED25BA48BCBB /* MockcatSample */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5BCB6AFD92BCF236C2BC4683 /* Build configuration list for PBXNativeTarget "MockcatSample" */;
+			buildPhases = (
+				2F4F38EEF697932B57318E82 /* Link KMP (Gradle) */,
+				1377D567F609E3038C61E118 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MockcatSample;
+			packageProductDependencies = (
+			);
+			productName = MockcatSample;
+			productReference = 98ECAF08CA06C0491B19A4BD /* MockcatSample.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D8A71171D564C0D071EF5D3F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = 04127A1B03DCAFDA0ED64E79 /* Build configuration list for PBXProject "MockcatSample" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = C9A57FD96572E84CBC6E2B09;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 50DF813B9E07E676D8EE1089 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				55F4386E47C8ED25BA48BCBB /* MockcatSample */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		2F4F38EEF697932B57318E82 /* Link KMP (Gradle) */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Link KMP (Gradle)";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#!/bin/bash\n# Resolves the Git repo root and runs Gradle to build the KMP iOS framework (simulator, arm64).\n# Xcode run-script env: https://help.apple.com/xcode/#/dev745c52c4c\nset -euo pipefail\nif [[ -n \"${PROJECT_DIR:-}\" ]]; then\n  # Directory that contains the .xcodeproj (e.g. …/iosApp/MockcatSample)\n  REPO_ROOT=\"$(cd \"$PROJECT_DIR/../..\" && pwd)\"\nelif [[ -n \"${SRCROOT:-}\" ]]; then\n  REPO_ROOT=\"$(cd \"$SRCROOT/../..\" && pwd)\"\nelse\n  SCRIPT_DIR=\"$(cd \"$(dirname \"${BASH_SOURCE[0]:-$0}\")\" && pwd)\"\n  REPO_ROOT=\"$(cd \"$SCRIPT_DIR/../..\" && pwd)\"\nfi\ncd \"$REPO_ROOT\"\nif [[ -x ./gradlew ]]; then\n  exec ./gradlew --no-daemon :mockcat-logger-ui:linkDebugFrameworkIosSimulatorArm64\nelse\n  echo \"error: expected ./gradlew at $REPO_ROOT\" >&2\n  exit 1\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1377D567F609E3038C61E118 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F27D3F4A949C00BED32F3734 /* ContentView.swift in Sources */,
+				3E5A074029DDC917220E040C /* MockcatSampleApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		73251E642AD5F447E7293C58 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		8C721DBAF07102E25AA42D00 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = "$(inherited) $(SRCROOT)/../../mockcat-logger-ui/build/bin/iosSimulatorArm64/debugFramework";
+				INFOPLIST_FILE = Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				OTHER_LDFLAGS = "$(inherited) -framework MockcatLoggerUI";
+				PRODUCT_BUNDLE_IDENTIFIER = com.mockcat.MockcatSample;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		8E5CFA307FD4548F53A4B7F2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = "$(inherited) $(SRCROOT)/../../mockcat-logger-ui/build/bin/iosSimulatorArm64/debugFramework";
+				INFOPLIST_FILE = Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				OTHER_LDFLAGS = "$(inherited) -framework MockcatLoggerUI";
+				PRODUCT_BUNDLE_IDENTIFIER = com.mockcat.MockcatSample;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B12696D54CEEA66C3481B1C4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		04127A1B03DCAFDA0ED64E79 /* Build configuration list for PBXProject "MockcatSample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B12696D54CEEA66C3481B1C4 /* Debug */,
+				73251E642AD5F447E7293C58 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		5BCB6AFD92BCF236C2BC4683 /* Build configuration list for PBXNativeTarget "MockcatSample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8E5CFA307FD4548F53A4B7F2 /* Debug */,
+				8C721DBAF07102E25AA42D00 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D8A71171D564C0D071EF5D3F /* Project object */;
+}

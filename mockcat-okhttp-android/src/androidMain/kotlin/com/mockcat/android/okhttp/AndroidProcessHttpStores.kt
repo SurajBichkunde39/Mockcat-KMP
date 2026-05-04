@@ -2,6 +2,7 @@ package com.mockcat.android.okhttp
 
 import android.content.Context
 import com.mockcat.api.MockcatStore
+import com.mockcat.logger.HttpLogReaderRegistry
 import com.mockcat.logger.persistence.RoomHttpLogStore
 import com.mockcat.logger.persistence.getHttpLogStoreForAndroid
 import com.mockcat.persistence.getMockcatStoreForAndroid
@@ -16,7 +17,9 @@ internal object AndroidHttpLogStoreHolder {
         val app = context.applicationContext
         return synchronized(lock) {
             if (store == null) {
-                store = getHttpLogStoreForAndroid(app)
+                val created = getHttpLogStoreForAndroid(app)
+                HttpLogReaderRegistry.install(created)
+                store = created
             }
             checkNotNull(store)
         }

@@ -16,6 +16,7 @@ ktor = "3.3.1"
 okhttp = "4.12.0"
 # KotlinX
 coroutines = "1.10.2"
+atomicfu = "0.30.0"
 serialization = "1.9.0"
 # Quality
 detekt = "1.23.8"
@@ -50,6 +51,7 @@ ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 [libraries]
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinx-atomicfu = { group = "org.jetbrains.kotlinx", name = "atomicfu", version.ref = "atomicfu" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
 roomRuntime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }

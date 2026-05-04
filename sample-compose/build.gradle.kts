@@ -12,7 +12,7 @@ kotlin {
     sourceSets {
         val androidMain by getting {
             dependencies {
-                // [OkHttpClientFactory] and [MockcatLogging.logReader] via [mockcat-okhttp-android]; ViewModel uses [HttpLogReader] for the log screen.
+                // [OkHttpClientFactory] / [MockcatLogging] — registers [HttpLogReader] for [MockcatLoggerUi] log activity.
                 implementation(project(":mockcat-okhttp-android"))
                 implementation(project(":mockcat-logger-ui"))
                 implementation(libs.androidxActivityCompose)

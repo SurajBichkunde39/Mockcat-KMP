@@ -1,6 +1,7 @@
 package com.mockcat.logger.persistence
 
 import androidx.room.Room
+import com.mockcat.logger.HttpLogReaderRegistry
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
@@ -22,7 +23,12 @@ fun getHttpLogDatabaseBuilder(): androidx.room.RoomDatabase.Builder<HttpLogDatab
     )
 }
 
-fun getHttpLogStoreForIos(): RoomHttpLogStore {
+private val httpLogStoreForIos: RoomHttpLogStore by lazy {
     val database = getHttpLogDatabase(getHttpLogDatabaseBuilder())
-    return RoomHttpLogStore(database)
+    RoomHttpLogStore(database).also { HttpLogReaderRegistry.install(it) }
 }
+
+/**
+ * One shared store and DB per process. Registers [HttpLogReaderRegistry] for the logger UI.
+ */
+fun getHttpLogStoreForIos(): RoomHttpLogStore = httpLogStoreForIos
