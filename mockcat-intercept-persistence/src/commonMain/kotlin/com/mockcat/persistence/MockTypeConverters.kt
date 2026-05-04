@@ -2,9 +2,16 @@ package com.mockcat.persistence
 
 import androidx.room.TypeConverter
 import com.mockcat.api.MockType
+import com.mockcat.api.http.HttpResponseSnapshot
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
+
+private val snapshotJson =
+    Json {
+        ignoreUnknownKeys = true
+        encodeDefaults = true
+    }
 
 class MockTypeConverters {
     @TypeConverter
@@ -40,4 +47,10 @@ class MockTypeConverters {
             jsonString,
         )
     }
+
+    @TypeConverter
+    fun fromHttpResponseSnapshot(snapshot: HttpResponseSnapshot?): String? = snapshot?.let { snapshotJson.encodeToString(HttpResponseSnapshot.serializer(), it) }
+
+    @TypeConverter
+    fun toHttpResponseSnapshot(jsonString: String?): HttpResponseSnapshot? = jsonString?.let { snapshotJson.decodeFromString(HttpResponseSnapshot.serializer(), it) }
 }

@@ -26,8 +26,8 @@ jobs:
           :sample-compose:assembleDebug
           :sample-server:compileKotlin
           :mockcat-api:compileAndroidMain
-          :mockcat-persistence:compileDebugKotlinAndroid
-          :mockcat-persistence:compileKotlinIosSimulatorArm64
+          :mockcat-intercept-persistence:compileDebugKotlinAndroid
+          :mockcat-intercept-persistence:compileKotlinIosSimulatorArm64
           :mockcat-logger:compileAndroidMain
           :mockcat-logger:compileKotlinIosSimulatorArm64
           :mockcat-logger-persistence:compileDebugKotlinAndroid
@@ -53,5 +53,5 @@ jobs:
       - name: Link iOS sim frameworks
         run: |
           ./gradlew :mockcat-api:linkDebugFrameworkIosSimulatorArm64 \
-            :mockcat-persistence:linkDebugFrameworkIosSimulatorArm64 \
+            :mockcat-intercept-persistence:linkDebugFrameworkIosSimulatorArm64 \
             :mockcat-intercept-urlsession:linkDebugFrameworkIosSimulatorArm64

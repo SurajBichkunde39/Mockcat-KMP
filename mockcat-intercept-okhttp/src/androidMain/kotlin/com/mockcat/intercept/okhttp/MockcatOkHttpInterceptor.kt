@@ -72,11 +72,18 @@ class MockcatOkHttpInterceptor(
             }
         }
         val contentType = s.contentType
-        return Response.Builder()
-            .code(s.statusCode)
-            .message(plainMessage(s.statusCode))
-            .request(request)
-            .protocol(Protocol.HTTP_1_1)
+        val builder =
+            Response.Builder()
+                .code(s.statusCode)
+                .message(plainMessage(s.statusCode))
+                .request(request)
+                .protocol(Protocol.HTTP_1_1)
+        for (h in s.responseHeaders) {
+            if (shouldEmitSyntheticResponseHeader(h.name)) {
+                builder.addHeader(h.name, h.value)
+            }
+        }
+        return builder
             .body(s.body.toResponseBody((contentType.ifBlank { "application/json" }).toMediaTypeOrNull()))
             .addHeader(MockcatHeaders.SOURCE_NAME, MockcatHeaders.SOURCE_VALUE_STATIC)
             .build()
@@ -111,6 +118,17 @@ class MockcatOkHttpInterceptor(
                 .build()
         }
     }
+}
+
+private fun shouldEmitSyntheticResponseHeader(name: String): Boolean = when (name.lowercase()) {
+    "content-length",
+    "transfer-encoding",
+    "connection",
+    "keep-alive",
+    "upgrade",
+    "proxy-connection",
+    -> false
+    else -> true
 }
 
 private fun plainMessage(statusCode: Int): String = when (statusCode) {

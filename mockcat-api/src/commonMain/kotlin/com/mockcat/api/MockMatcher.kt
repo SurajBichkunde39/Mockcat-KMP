@@ -1,5 +1,8 @@
 package com.mockcat.api
 
+import com.mockcat.api.http.effectiveStaticResponse
+import com.mockcat.api.http.toApplyStatic
+
 object MockMatcher {
     /**
      * Picks the best [MockEntry] for this request. Stricter required header + query sets win
@@ -48,12 +51,7 @@ object MockMatcher {
         mock: MockEntry,
     ): MockcatResult = when (mock.mockType) {
         MockType.STATIC ->
-            MockcatResult.ApplyStatic(
-                statusCode = mock.responseCode ?: 200,
-                body = mock.responseBody.orEmpty(),
-                contentType = "application/json",
-                delayMs = mock.delayMs ?: 0L,
-            )
+            mock.effectiveStaticResponse().toApplyStatic(mock.delayMs ?: 0L)
         MockType.REDIRECT -> {
             val u = mock.redirectUrl
             if (u.isNullOrBlank()) {

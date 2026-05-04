@@ -1,5 +1,6 @@
 package com.mockcat.api
 
+import com.mockcat.api.http.HttpResponseSnapshot
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
 
@@ -12,6 +13,11 @@ data class MockEntry(
     val httpMethod: String,
     val isEnabled: Boolean = true,
     val mockType: MockType = MockType.STATIC,
+    /**
+     * Rich static response when [mockType] is [MockType.STATIC]. When non-null, takes precedence over
+     * [responseCode] / [responseBody].
+     */
+    val staticResponse: HttpResponseSnapshot? = null,
     val responseCode: Int? = null,
     val responseBody: String? = null,
     val delayMs: Long? = null,
@@ -31,6 +37,7 @@ data class MockFileEntry(
     val httpMethod: String,
     val isEnabled: Boolean = true,
     val mockType: MockType = MockType.STATIC,
+    val staticResponse: HttpResponseSnapshot? = null,
     val responseCode: Int? = null,
     val responseBody: JsonElement? = null,
     val delayMs: Long? = null,
@@ -40,6 +47,11 @@ data class MockFileEntry(
 )
 
 @Serializable
-data class MultipleMockEntries(
+data class MockFileEntries(
     val entries: List<MockFileEntry>,
+)
+
+@Serializable
+data class MockEntries(
+    val entries: List<MockEntry>,
 )

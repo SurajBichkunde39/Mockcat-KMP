@@ -9,9 +9,9 @@
 | Module | Role |
 |--------|------|
 | `mockcat-api` | **Shared** HTTP contract: `HttpRequestMetadata`, mock types (`MockEntry`, `MockcatResult`, `MockcatStore`, `MockMatcher`), and **logging** DTOs under `com.mockcat.api.http` (`HttpRequestSnapshot`, `HttpResponseSnapshot`, `LoggedHttpCall`, etc.) |
-| `mockcat-persistence` | Room (KMP) + `RoomMockcatStore` for **mock rules only**; bundled SQLite, import/export JSON |
+| `mockcat-intercept-persistence` | Room (KMP) + `RoomMockcatStore` for **mock rules only**; bundled SQLite, import/export JSON |
 | `mockcat-logger` | `HttpLogWriter` / `HttpLogReader`, `InMemoryHttpLogStore` (ring buffer) — depends on `mockcat-api` only. **`HttpLogReaderRegistry`**: process-wide `install` / `requireCurrent` for the log UI (Activity / iOS VC) so feature code does not take an `HttpLogReader` |
-| `mockcat-logger-persistence` | **Separate** Room DB for HTTP call logs only (`http_log_db` file); `RoomHttpLogStore`; **does not** depend on `mockcat-persistence` |
+| `mockcat-logger-persistence` | **Separate** Room DB for HTTP call logs only (`http_log_db` file); `RoomHttpLogStore`; **does not** depend on `mockcat-intercept-persistence` |
 | `mockcat-logger-okhttp` | Android: `MockcatHttpLoggingInterceptor` (read-only log + forward); maps OkHttp to `com.mockcat.api.http` |
 | `mockcat-logger-ktor` | KMP: Ktor `HttpClient` plugin `MockcatKtorHttpLogging` (OkHttp / JVM / Android) → `HttpLogWriter` / `LoggedHttpCall`; do not also install `MockcatLogging` on the same OkHttp client or logs may duplicate |
 | `mockcat-okhttp-android` | Android: `addInterceptor(MockcatLogging(context))`, `MockcatIntercept(context)` + `bindClient(OkHttpClient)` after `build()`. The process-singleton `RoomHttpLogStore` (same as `getHttpLogStoreForAndroid` / `getMockcatStoreForAndroid`) is registered on **`HttpLogReaderRegistry`** when first created, so the log UI can resolve the reader without app wiring |
@@ -28,11 +28,11 @@
 
 ## Conventions
 
-- **Tooling** (see `gradle/libs.versions.toml`): **Gradle 9.3+**, **AGP 9.1.1**, **Kotlin 2.2.21**, **KSP 2.3.7** (KSP 2.3+ is required for AGP 9 + the Android KMP library plugin; see [google/ksp#2476](https://github.com/google/ksp/issues/2476)). **Room 2.8.4** with the Room Gradle plugin in `mockcat-persistence` and `mockcat-logger-persistence` (see below). **Compose Multiplatform** plugin `1.10.3` with **Material3** on its own line (`composeMaterial3`).
+- **Tooling** (see `gradle/libs.versions.toml`): **Gradle 9.3+**, **AGP 9.1.1**, **Kotlin 2.2.21**, **KSP 2.3.7** (KSP 2.3+ is required for AGP 9 + the Android KMP library plugin; see [google/ksp#2476](https://github.com/google/ksp/issues/2476)). **Room 2.8.4** with the Room Gradle plugin in `mockcat-intercept-persistence` and `mockcat-logger-persistence` (see below). **Compose Multiplatform** plugin `1.10.3` with **Material3** on its own line (`composeMaterial3`).
 
 - **Android KMP library plugin** (most modules): `com.android.kotlin.multiplatform.library` with a `kotlin { android { namespace; compileSdk; minSdk; compilerOptions { jvmTarget } } }` block. There is **no** top-level `android { }` in those modules. **Android main** compile task name is e.g. `:mockcat-api:compileAndroidMain` (single-variant plugin; not `compileDebugKotlinAndroid`).
 
-- **Room (KMP) `com.android.library` exception:** `mockcat-persistence` and `mockcat-logger-persistence` use `com.android.library` + `androidTarget { publishAllLibraryVariants() }` and the **`androidx.room` Gradle plugin** because the Room plugin is not yet compatible with `com.android.kotlin.multiplatform.library` (class cast on `KotlinMultiplatformAndroidCompilationImpl`). KSP for Room uses `kspAndroid` and `kspKotlinIos*`. Revisit when AndroidX Room supports the new Android KMP target.
+- **Room (KMP) `com.android.library` exception:** `mockcat-intercept-persistence` and `mockcat-logger-persistence` use `com.android.library` + `androidTarget { publishAllLibraryVariants() }` and the **`androidx.room` Gradle plugin** because the Room plugin is not yet compatible with `com.android.kotlin.multiplatform.library` (class cast on `KotlinMultiplatformAndroidCompilationImpl`). KSP for Room uses `kspAndroid` and `kspKotlinIos*`. Revisit when AndroidX Room supports the new Android KMP target.
 
 - **`gradle.properties`**
   - `android.builtInKotlin=false` — required for `sample-compose` (KMP + `com.android.application`); otherwise the `kotlin` extension is registered twice (see [issuetracker 438678642](https://issuetracker.google.com/issues/438678642)).
@@ -51,11 +51,11 @@
 ## Common tasks
 
 - Android debug: `./gradlew :sample-compose:assembleDebug`
-- iOS KSP (Room): `./gradlew :mockcat-persistence:kspKotlinIosSimulatorArm64` and/or `:mockcat-logger-persistence:kspKotlinIosSimulatorArm64` (or `kspKotlinIosArm64`)
+- iOS KSP (Room): `./gradlew :mockcat-intercept-persistence:kspKotlinIosSimulatorArm64` and/or `:mockcat-logger-persistence:kspKotlinIosSimulatorArm64` (or `kspKotlinIosArm64`)
 - Logger stack compile: `:mockcat-logger:compileAndroidMain`, `:mockcat-logger-persistence:compileDebugKotlinAndroid`, `:mockcat-logger-okhttp:compileAndroidMain`, `:mockcat-okhttp-android:compileAndroidMain`, `:mockcat-logger-ui:compileAndroidMain`, `:mockcat-logger-ui:compileKotlinIosSimulatorArm64`
 - iOS **frameworks** for the Swift app (simulator arm64, debug; run **Embed & Sign** in Xcode in dependency order, see `iosApp/MockcatSample/README.md`):
   - `./gradlew :mockcat-api:linkDebugFrameworkIosSimulatorArm64`
-  - `./gradlew :mockcat-persistence:linkDebugFrameworkIosSimulatorArm64`
+  - `./gradlew :mockcat-intercept-persistence:linkDebugFrameworkIosSimulatorArm64`
   - `./gradlew :mockcat-intercept-urlsession:linkDebugFrameworkIosSimulatorArm64`
   - `./gradlew :mockcat-logger-ui:linkDebugFrameworkIosSimulatorArm64` (pulls in Room KSP and `MockcatLoggerPersistence` as needed; output path is printed on success)
 - Frameworks are emitted under each module’s `build/` tree (see Gradle task output for exact paths). In Xcode, **Embed & Sign** those frameworks, then import in Swift, e.g. `MockcatApi`, `MockcatPersistence`, `MockcatInterceptUrlsession`. The SQLite DB for Room on iOS is under the app’s documents directory (see `DatabaseBuilder.ios.kt`).
@@ -63,9 +63,10 @@
 ## iOS sample (Swift)
 
 - **Sources and Xcode project:** `iosApp/MockcatSample/` (includes **`MockcatSample.xcodeproj`**, `project.yml` for [XcodeGen](https://github.com/yonaskolb/XcodeGen) if you regenerate, and a pre-build **Gradle** step that links `MockcatLoggerUI` for the simulator). Open the project, pick an iPhone simulator, and run. See `iosApp/MockcatSample/README.md`.
-- **Kotlin:** `getMockcatStoreForIos(): MockcatStore` in `mockcat-persistence`, `RunMockcatUrlSessionResolve` / `toHttpRequestMetadata` in `mockcat-intercept-urlsession` for a Swift `URLProtocol` implementation. Put the full URL (including `?query`) in `HttpRequestMetadata.url` so `baseUrl` / `queryParameters` match OkHttp.
+- **Kotlin:** `getMockcatStoreForIos(): MockcatStore` in `mockcat-intercept-persistence`, `RunMockcatUrlSessionResolve` / `toHttpRequestMetadata` in `mockcat-intercept-urlsession` for a Swift `URLProtocol` implementation. Put the full URL (including `?query`) in `HttpRequestMetadata.url` so `baseUrl` / `queryParameters` match OkHttp.
 - **HTTP log list (Chucker-style):** import the **`MockcatLoggerUI`** framework. At startup, call `installHttpLogReaderForIos()` (Kotlin) so the Room log store and `HttpLogReaderRegistry` are set up. Present the view from `createHttpLogListViewController()`. No `HttpLogReader` in app feature code. Until a URLSession / Ktor pipeline logs into the same store, the list may stay empty; the viewer is still valid.
 - **URLSession:** set `URLSessionConfiguration.protocolClasses` to your `URLProtocol` **before** creating a `URLSession` that should see mocks.
+- **Static mock responses:** when `RunMockcatUrlSessionResolve` returns `ApplyStatic`, use `statusCode`, `body`, `contentType` for the HTTP body and status line. Extra headers are on `responseHeaders`; `flattenedResponseHeaders()` in `mockcat-intercept-urlsession` merges by name (later wins) for `HTTPURLResponse` dictionary wiring—respect `delayMs` off the main thread.
 
 ## Android `sample-compose`
 

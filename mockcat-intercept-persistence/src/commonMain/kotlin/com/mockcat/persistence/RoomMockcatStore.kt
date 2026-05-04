@@ -70,13 +70,15 @@ class RoomMockcatStore(
 }
 
 private fun MockEntry.toFileEntry(): MockFileEntry {
-    val s = responseBody
     val body: JsonElement? =
-        when (s) {
-            null -> null
-            else ->
-                runCatching { toFileEntryJson.parseToJsonElement(s) }
-                    .getOrElse { JsonPrimitive(s) }
+        when {
+            staticResponse != null -> null
+            responseBody == null -> null
+            else -> {
+                val rb = requireNotNull(responseBody)
+                runCatching { toFileEntryJson.parseToJsonElement(rb) }
+                    .getOrElse { JsonPrimitive(rb) }
+            }
         }
     return MockFileEntry(
         url = url,
@@ -84,6 +86,7 @@ private fun MockEntry.toFileEntry(): MockFileEntry {
         httpMethod = httpMethod,
         isEnabled = isEnabled,
         mockType = mockType,
+        staticResponse = staticResponse,
         responseCode = responseCode,
         responseBody = body,
         delayMs = delayMs,

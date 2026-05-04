@@ -8,7 +8,7 @@ import androidx.room.TypeConverters
 
 @Database(
     entities = [MockEntity::class],
-    version = 2,
+    version = 3,
     exportSchema = false,
 )
 @ConstructedBy(MockcatDatabaseConstructor::class)

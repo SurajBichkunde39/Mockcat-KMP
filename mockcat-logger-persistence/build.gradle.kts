@@ -1,5 +1,5 @@
 /**
- * HTTP traffic log storage (separate DB from [mockcat-persistence] mock rules). Same Room+KMP
+ * HTTP traffic log storage (separate DB from [mockcat-intercept-persistence] mock rules). Same Room+KMP
  * pattern as mock rules; see AGENT.md.
  */
 plugins {

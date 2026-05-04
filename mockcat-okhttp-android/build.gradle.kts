@@ -21,7 +21,7 @@ kotlin {
                 implementation(project(":mockcat-logger-okhttp"))
                 implementation(project(":mockcat-logger-persistence"))
                 implementation(project(":mockcat-intercept-okhttp"))
-                implementation(project(":mockcat-persistence"))
+                implementation(project(":mockcat-intercept-persistence"))
                 implementation(libs.okhttp)
                 implementation(libs.kotlinx.coroutines.core)
             }

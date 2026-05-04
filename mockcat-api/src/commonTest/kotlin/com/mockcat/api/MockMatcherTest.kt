@@ -1,5 +1,8 @@
 package com.mockcat.api
 
+import com.mockcat.api.http.HttpHeaderField
+import com.mockcat.api.http.HttpResponseSnapshot
+import com.mockcat.api.http.LoggedHttpBody
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -53,7 +56,33 @@ class MockMatcherTest {
             )
         val res = MockMatcher.toResult(HttpRequestMetadata("https://u", "GET"), m)
         assertTrue(res is MockcatResult.ApplyStatic)
-        assertEquals(201, res.statusCode)
+        assertEquals(201, (res as MockcatResult.ApplyStatic).statusCode)
+    }
+
+    @Test
+    fun toResultStaticPrefersSnapshotOverLegacy() {
+        val m =
+            MockEntry(
+                id = 0,
+                url = "u",
+                httpMethod = "GET",
+                mockType = MockType.STATIC,
+                staticResponse =
+                HttpResponseSnapshot(
+                    statusCode = 418,
+                    body = LoggedHttpBody.Text("{}"),
+                    headers = listOf(HttpHeaderField("X-Mockcat", "yes")),
+                ),
+                responseCode = 200,
+                responseBody = "legacy",
+                delayMs = 0,
+            )
+        val res = MockMatcher.toResult(HttpRequestMetadata("https://u", "GET"), m)
+        assertTrue(res is MockcatResult.ApplyStatic)
+        val a = res as MockcatResult.ApplyStatic
+        assertEquals(418, a.statusCode)
+        assertEquals("{}", a.body)
+        assertEquals("yes", a.responseHeaders.single { it.name == "X-Mockcat" }.value)
     }
 
     @Test

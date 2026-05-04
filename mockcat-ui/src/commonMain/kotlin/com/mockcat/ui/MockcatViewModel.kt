@@ -4,6 +4,7 @@ import com.mockcat.api.MockEntry
 import com.mockcat.api.MockType
 import com.mockcat.api.MockcatStore
 import com.mockcat.api.buildHttpUrl
+import com.mockcat.api.http.LoggedHttpBody
 import com.mockcat.api.splitHttpUrl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -89,18 +90,35 @@ data class MockFormState(
             redirectUrl = "",
         )
 
-        fun from(e: MockEntry) = MockFormState(
-            id = e.id,
-            url = buildHttpUrl(e.url, e.requiredQueryParams),
-            label = e.label,
-            method = e.httpMethod,
-            isEnabled = e.isEnabled,
-            mockType = e.mockType,
-            responseCode = e.responseCode?.toString() ?: "",
-            responseBody = e.responseBody.orEmpty(),
-            delayMs = e.delayMs?.toString() ?: "0",
-            redirectUrl = e.redirectUrl.orEmpty(),
-        )
+        fun from(e: MockEntry): MockFormState {
+            val sr = e.staticResponse
+            val responseCodeStr: String
+            val responseBodyStr: String
+            if (sr != null) {
+                responseCodeStr = sr.statusCode.toString()
+                responseBodyStr =
+                    when (val b = sr.body) {
+                        is LoggedHttpBody.None -> ""
+                        is LoggedHttpBody.Text -> b.text
+                        is LoggedHttpBody.Omitted -> ""
+                    }
+            } else {
+                responseCodeStr = e.responseCode?.toString() ?: ""
+                responseBodyStr = e.responseBody.orEmpty()
+            }
+            return MockFormState(
+                id = e.id,
+                url = buildHttpUrl(e.url, e.requiredQueryParams),
+                label = e.label,
+                method = e.httpMethod,
+                isEnabled = e.isEnabled,
+                mockType = e.mockType,
+                responseCode = responseCodeStr,
+                responseBody = responseBodyStr,
+                delayMs = e.delayMs?.toString() ?: "0",
+                redirectUrl = e.redirectUrl.orEmpty(),
+            )
+        }
     }
 
     fun toEntry(): MockEntry {
@@ -112,6 +130,7 @@ data class MockFormState(
             httpMethod = method.trim().uppercase(),
             isEnabled = isEnabled,
             mockType = mockType,
+            staticResponse = null,
             responseCode = responseCode.toIntOrNull(),
             responseBody = responseBody.ifBlank { null },
             delayMs = delayMs.toLongOrNull(),

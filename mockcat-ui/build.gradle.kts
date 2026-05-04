@@ -31,7 +31,7 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
-                implementation(project(":mockcat-persistence"))
+                implementation(project(":mockcat-intercept-persistence"))
                 implementation(libs.androidxActivityCompose)
             }
         }

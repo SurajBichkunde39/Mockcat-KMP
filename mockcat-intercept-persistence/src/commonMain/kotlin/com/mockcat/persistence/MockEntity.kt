@@ -3,6 +3,7 @@ package com.mockcat.persistence
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.mockcat.api.MockType
+import com.mockcat.api.http.HttpResponseSnapshot
 
 @Entity(tableName = "mocks")
 data class MockEntity(
@@ -13,6 +14,7 @@ data class MockEntity(
     val httpMethod: String,
     val isEnabled: Boolean = true,
     val mockType: MockType = MockType.STATIC,
+    val staticResponse: HttpResponseSnapshot? = null,
     val responseCode: Int? = null,
     val responseBody: String? = null,
     val delayMs: Long? = null,
