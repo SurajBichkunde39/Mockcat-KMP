@@ -31,7 +31,8 @@ object HttpLogReaderRegistry {
     fun requireCurrent(): HttpLogReader = currentOrNull()
         ?: error(
             "HttpLogReader is not installed. " +
-                "On Android, add com.mockcat.android.okhttp.MockcatLogging to your OkHttp stack. " +
+                "On Android, add com.mockcat.logger.okhttp.MockcatLogging to your OkHttp stack " +
+                "(or installMockcatKtorHttpLogging). " +
                 "On iOS, call the bootstrap that provides getHttpLogStoreForIos() and registers the reader " +
                 "(or call install() with the shared [RoomHttpLogStore]).",
         )

@@ -18,6 +18,7 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 implementation(project(":mockcat-api"))
+                implementation(project(":mockcat-intercept-persistence"))
                 implementation(libs.okhttp)
                 implementation(libs.kotlinx.coroutines.core)
             }

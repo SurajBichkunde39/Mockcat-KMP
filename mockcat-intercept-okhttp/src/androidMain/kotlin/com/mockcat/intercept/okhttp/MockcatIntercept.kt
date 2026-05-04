@@ -1,7 +1,7 @@
-package com.mockcat.android.okhttp
+package com.mockcat.intercept.okhttp
 
 import android.content.Context
-import com.mockcat.intercept.okhttp.MockcatOkHttpInterceptor
+import com.mockcat.persistence.ProcessMockcatStore
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 
@@ -11,7 +11,7 @@ class MockcatIntercept private constructor(
     constructor(
         context: Context,
     ) : this(
-        mock = MockcatOkHttpInterceptor(store = AndroidMockcatStoreHolder.get(context)),
+        mock = MockcatOkHttpInterceptor(store = ProcessMockcatStore.get(context)),
     )
 
     fun bindClient(client: OkHttpClient) {

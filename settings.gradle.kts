@@ -24,7 +24,6 @@ include(
     ":mockcat-logger-okhttp",
     ":mockcat-logger-ktor",
     ":mockcat-logger-urlsession",
-    ":mockcat-okhttp-android",
     ":mockcat-logger-ui",
     ":mockcat-intercept-okhttp",
     ":mockcat-intercept-ktor",

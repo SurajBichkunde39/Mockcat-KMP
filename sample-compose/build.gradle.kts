@@ -12,8 +12,9 @@ kotlin {
     sourceSets {
         val androidMain by getting {
             dependencies {
-                // [OkHttpClientFactory] / [MockcatLogging] — registers [HttpLogReader] for [MockcatLoggerUi] log activity.
-                implementation(project(":mockcat-okhttp-android"))
+                // [OkHttpClientFactory]: MockcatLogging + MockcatIntercept (process stores + registry).
+                implementation(project(":mockcat-logger-okhttp"))
+                implementation(project(":mockcat-intercept-okhttp"))
                 implementation(project(":mockcat-logger-ktor"))
                 implementation(project(":mockcat-logger-ui"))
                 implementation(project(":mockcat-intercept-ui"))

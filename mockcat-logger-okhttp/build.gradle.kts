@@ -19,6 +19,7 @@ kotlin {
             dependencies {
                 api(project(":mockcat-logger-core"))
                 implementation(project(":mockcat-api"))
+                implementation(project(":mockcat-logger-persistence"))
                 implementation(libs.okhttp)
                 implementation(libs.kotlinx.coroutines.core)
             }

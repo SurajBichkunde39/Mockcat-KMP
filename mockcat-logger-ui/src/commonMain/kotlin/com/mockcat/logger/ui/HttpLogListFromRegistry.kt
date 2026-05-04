@@ -25,7 +25,7 @@ fun HttpLogListContentFromRegistry() {
         MaterialTheme(colorScheme = lightColorScheme()) {
             Text(
                 "HTTP log is not available yet. On Android, build an OkHttpClient with " +
-                    "com.mockcat.android.okhttp.MockcatLogging (the reader is registered when the " +
+                    "com.mockcat.logger.okhttp.MockcatLogging (the reader is registered when the " +
                     "interceptor is created). On iOS, call getHttpLogStoreForIos() during app startup.",
             )
         }

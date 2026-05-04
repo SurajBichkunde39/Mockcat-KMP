@@ -2,14 +2,14 @@ package com.mockcat.sample.data
 
 import android.content.Context
 import com.chuckerteam.chucker.api.ChuckerInterceptor
-import com.mockcat.android.okhttp.MockcatIntercept
-import com.mockcat.android.okhttp.MockcatLogging
+import com.mockcat.intercept.okhttp.MockcatIntercept
+import com.mockcat.logger.okhttp.MockcatLogging
 import okhttp3.OkHttpClient
 
 /**
  * **Composition root for the sample [OkHttpClient]:** Chucker, [MockcatLogging], and
  * [com.mockcat.intercept.okhttp.MockcatOkHttpInterceptor] via [MockcatIntercept] (process-wide
- * stores from [mockcat-okhttp-android]). Call [MockcatIntercept.bindClient] after building the
+ * stores from logger / intercept persistence). Call [MockcatIntercept.bindClient] after building the
  * client so redirect mocks can execute inner calls.
  */
 object OkHttpClientFactory {
