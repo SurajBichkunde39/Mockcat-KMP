@@ -17,7 +17,7 @@ kotlin {
     sourceSets {
         val iosMain by getting {
             dependencies {
-                api(project(":mockcat-logger"))
+                api(project(":mockcat-logger-core"))
                 implementation(project(":mockcat-logger-persistence"))
                 implementation(project(":mockcat-api"))
                 implementation(libs.kotlinx.coroutines.core)

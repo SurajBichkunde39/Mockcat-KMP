@@ -25,7 +25,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(project(":mockcat-api"))
-                implementation(project(":mockcat-logger"))
+                implementation(project(":mockcat-logger-core"))
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.roomRuntime)

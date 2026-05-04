@@ -19,7 +19,7 @@ include(
     ":mockcat-api",
     ":mockcat-intercept-ui",
     ":mockcat-intercept-persistence",
-    ":mockcat-logger",
+    ":mockcat-logger-core",
     ":mockcat-logger-persistence",
     ":mockcat-logger-okhttp",
     ":mockcat-logger-ktor",

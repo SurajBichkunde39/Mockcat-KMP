@@ -17,7 +17,7 @@ kotlin {
     sourceSets {
         val androidMain by getting {
             dependencies {
-                api(project(":mockcat-logger"))
+                api(project(":mockcat-logger-core"))
                 implementation(project(":mockcat-logger-okhttp"))
                 implementation(project(":mockcat-logger-persistence"))
                 implementation(project(":mockcat-intercept-okhttp"))

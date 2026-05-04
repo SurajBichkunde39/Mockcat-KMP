@@ -17,7 +17,7 @@ kotlin {
     sourceSets {
         val androidMain by getting {
             dependencies {
-                api(project(":mockcat-logger"))
+                api(project(":mockcat-logger-core"))
                 implementation(project(":mockcat-api"))
                 implementation(libs.okhttp)
                 implementation(libs.kotlinx.coroutines.core)
