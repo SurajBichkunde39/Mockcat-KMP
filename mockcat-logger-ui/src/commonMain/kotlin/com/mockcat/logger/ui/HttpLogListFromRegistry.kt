@@ -15,11 +15,13 @@ import kotlinx.coroutines.flow.collect
 
 /**
  * Host-agnostic list that reads from [HttpLogReaderRegistry] (installed by the logging layer).
+ * Manages in-place navigation to the detail screen.
  */
 @Composable
 fun HttpLogListContentFromRegistry() {
     val reader = HttpLogReaderRegistry.currentOrNull()
     var calls by remember { mutableStateOf<List<LoggedHttpCall>>(emptyList()) }
+    var selectedCallId by remember { mutableStateOf<Long?>(null) }
 
     if (reader == null) {
         MaterialTheme(colorScheme = lightColorScheme()) {
@@ -37,6 +39,18 @@ fun HttpLogListContentFromRegistry() {
     }
 
     MaterialTheme(colorScheme = lightColorScheme()) {
-        HttpLogListScreen(calls = calls)
+        val selected = selectedCallId
+        if (selected != null) {
+            HttpLogDetailScreen(
+                callId = selected,
+                reader = reader,
+                onBack = { selectedCallId = null },
+            )
+        } else {
+            HttpLogListScreen(
+                calls = calls,
+                onCallClick = { selectedCallId = it },
+            )
+        }
     }
 }
