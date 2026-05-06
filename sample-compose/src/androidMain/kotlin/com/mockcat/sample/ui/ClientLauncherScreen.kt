@@ -39,7 +39,7 @@ fun ClientLauncherScreen(
                 onClick = { onSelect(ClientKind.OkHttp) },
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text("OkHttp integration (Mockcat + Chucker + HTTP log)")
+                Text("OkHttp integration (Mockcat + HTTP log)")
             }
             FilledTonalButton(
                 onClick = { onSelect(ClientKind.Ktor) },

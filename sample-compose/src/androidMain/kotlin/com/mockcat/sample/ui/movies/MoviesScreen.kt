@@ -74,7 +74,7 @@ fun MoviesScreen(
                 )
             } else {
                 val subtitle = when (clientKind) {
-                    ClientKind.OkHttp -> "Stack: OkHttp (Mockcat + Chucker + HTTP log)"
+                    ClientKind.OkHttp -> "Stack: OkHttp (Mockcat + HTTP log)"
                     ClientKind.Ktor ->
                         "Stack: Ktor (OkHttp engine) + mockcat-logger-ktor. Logger shows the same HTTP log store."
                 }

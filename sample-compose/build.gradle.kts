@@ -36,7 +36,7 @@ kotlin {
                 implementation(libs.ktorSerializationKotlinxJson)
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.kotlinx.serialization.json)
-                implementation(libs.chucker.library)
+
             }
         }
     }

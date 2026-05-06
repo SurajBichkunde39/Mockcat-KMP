@@ -28,8 +28,7 @@ include(
     ":mockcat-intercept-okhttp",
     ":mockcat-intercept-ktor",
     ":mockcat-intercept-urlsession",
-    ":mockcat-integration-chucker",
-    ":mockcat-gradle-plugin",
+":mockcat-gradle-plugin",
     ":sample-compose",
     ":sample-server",
 )
