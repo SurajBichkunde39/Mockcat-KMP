@@ -14,12 +14,11 @@ The mockcat database contains the entries of API endpoints, some selected header
 
 In the current android app, I have created some add on tools as well which will make developers lives a bit better. Listing them below. 
 
-1. Chucker Integration  Chucker is an HTTP inspector for Android & OkHTTP (like Charles but on device). Here is the github repo for the Chuker  [https://github.com/ChuckerTeam/chucker](https://github.com/ChuckerTeam/chucker). Chuker gives an ability to export the request & response log in text files. I have added the app as a share target for the text file, and I have written a small parser which extracts the data from chucker export and adds an entry in the mockcat database.
-2. Gradle Integration  I have also created a gradle task which has one hardcoded file directory as an input. That directory contains the mocks for particular URLs. So, when a developer executes that gradle task, it takes all the files from that directory and creates entries in the mockcat database.
-3. App Shortcuts integration  Currently mockcat lives as one the features in the developer configurations present in the android app. These developer configurations are accessible via the app shortcuts as well. So, one of the ways to open mockcat in the current app is using app-shotcuts.
-4. Notification nudge  Whenever mockcat intercepts any request, mockcat intercepts the request and notification is fired to inform the user that this request has been preceded by mockcat & not the real server.
-5. Import & Export from file  I have also added support to export all the entries of mockcat to a file and import any file which is exported from mockcat or follow the similar schema of mockcat export.
-6. Multiple ADB devices support  In the branch in the android repository I had added the support to handle the multiple ADB devices. Branch name   enhancement/mockcatupdates
+1. Gradle Integration  I have also created a gradle task which has one hardcoded file directory as an input. That directory contains the mocks for particular URLs. So, when a developer executes that gradle task, it takes all the files from that directory and creates entries in the mockcat database.
+2. App Shortcuts integration  Currently mockcat lives as one the features in the developer configurations present in the android app. These developer configurations are accessible via the app shortcuts as well. So, one of the ways to open mockcat in the current app is using app-shotcuts.
+3. Notification nudge  Whenever mockcat intercepts any request, mockcat intercepts the request and notification is fired to inform the user that this request has been preceded by mockcat & not the real server.
+4. Import & Export from file  I have also added support to export all the entries of mockcat to a file and import any file which is exported from mockcat or follow the similar schema of mockcat export.
+5. Multiple ADB devices support  In the branch in the android repository I had added the support to handle the multiple ADB devices. Branch name   enhancement/mockcatupdates
 
 Here are implementation details from the current implementation:  
 Here is the main package  /Users/suraj.bichkunde/StudioProjects/bms-in-android-rename/mobile/feature-abconfig/src/main/java/com/bms/abconfig/mockcat  
@@ -33,8 +32,6 @@ Now I will give you a package wise division with a one line description
 6. /Users/suraj.bichkunde/StudioProjects/bms-in-android-rename/mobile/feature-abconfig/src/main/java/com/bms/abconfig/mockcat/cli → This is the place where we are handling incoming from gradle task.
 7. /Users/suraj.bichkunde/StudioProjects/bms-in-android-rename/mobile/app/build.gradle.kts → You can see the gradle task defined here which is executing the gradle task.
 8. /Users/suraj.bichkunde/StudioProjects/bms-in-android-rename/buildSrc/src/main/kotlin/tasks/[MockcatImportTask.kt](http://MockcatImportTask.kt) → this is the actual gradle task which is being executed.
-9. /Users/suraj.bichkunde/StudioProjects/bms-in-android-rename/mobile/feature-abconfig/src/main/java/com/bms/abconfig/mockcat/ui/[ChuckerImportActivity.kt](http://ChuckerImportActivity.kt) → This helps the importing from chucker.
-
 Here are my thoughts on the new implementation:  
 These are some of the primary goals that I am looking forward  
 
@@ -59,10 +56,9 @@ I want to divide the functionality in the separate modules. Here is some of my v
 2. mockcat-intercept-okhttp  This will also be an independent library which will use mockcat-core as a dependency. So, this will be targeted for the clients who are on android and using Okhttp client.
 3. mockcat-intercept-ktor   This will also be an independent library which will use mockcat-core as a dependency. So, this will be targeted for the clients who are on android and using ktor client.
 4. mockcat-intercept-fetch   Maybe this will be for the web developers. This will also be an independent library which will use mockcat-core as a dependency. So, this will be targeted for the clients who are on the web and using fetch API for making API calls.
-5. mockcat-integration-chucker  Again on the same idea, this will be targeted for the users who are using chucker as well.
-6. mockcat-inercept-URLSession → I am not very sure on how this will work ? but we can have this library for the users of the iOS.
+5. mockcat-inercept-URLSession → I am not very sure on how this will work ? but we can have this library for the users of the iOS.
 
-Along with this, we will have to build sample apps which will show how to use these libraries. I think this one is like a standard way of doing things. Same as chucker or ktor. 
+Along with this, we will have to build sample apps which will show how to use these libraries. I think this one is like a standard way of doing things. Same as ktor. 
 
 Also, we will have to build the utilities, just like I have created in the current app. Like the gradle task, we can create a gradle plugin which can help users control the mockcat database from terminal. We can extend the same plugin to experiment with the live server as well. 
 
@@ -71,7 +67,7 @@ Let’s start:
 - We are building this from scratch.   
 - Take a look at all the existing implementations. Check all the relevant code, even if I have not mentioned it explicitly.    
 - Create a new git repository. Add ktlint. Add detect. Before committing anything make sure ktlint and detekt checks are passed.   
-- For initial implementation let’s target only android and iOS. In android we are targeting two clients Okhttp & ktor. And for iOS we are targeting URLSession. Also, we will build chucker integration as well.  
+- For initial implementation let’s target only android and iOS. In android we are targeting two clients Okhttp & ktor. And for iOS we are targeting URLSession.  
 - Once you get all the context. Requesting understanding and idea of what we are targeting, go for git and initial setup.   
 - Then we will plan the whole task.   
 - In the planning phase use all the best practices of jetpack compose, android and kotlin multiplatform.   

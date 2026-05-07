@@ -5,9 +5,9 @@
 ## What you get
 
 - **Intercept** — Static and redirect-style rules keyed by URL (without query) and HTTP method, with optional header and query constraints. Android: OkHttp interceptor and Ktor `HttpSend` plugin. iOS: `NSURLProtocol` integration on a `URLSessionConfiguration` you own.
-- **Logging** — Persisted HTTP call history (OkHttp, Ktor, URLSession) and a Chucker-style list/detail experience in Compose.
+- **Logging** — Persisted HTTP call history (OkHttp, Ktor, URLSession) and a list/detail experience in Compose.
 - **UI** — Multiplatform mock editor and HTTP log screens; Android activities and iOS `UIViewController` entry points ship in library modules.
-- **Integration** — Optional Chucker import helper and a Gradle plugin for workflows that push mocks over ADB.
+- **Integration** — A Gradle plugin for workflows that push mocks over ADB.
 
 Library modules intentionally avoid a DI framework; apps wire `MockcatStore` and `HttpClient` / `URLSession` manually.
 
@@ -25,7 +25,6 @@ Library modules intentionally avoid a DI framework; apps wire `MockcatStore` and
 | `mockcat-logger-persistence` | Room-backed HTTP log store |
 | `mockcat-logger-okhttp` / `mockcat-logger-ktor` / `mockcat-logger-urlsession` | Platform loggers |
 | `mockcat-logger-ui` | Compose HTTP log list |
-| `mockcat-integration-chucker` | Chucker export parsing (Android) |
 | `mockcat-gradle-plugin` | JVM Gradle plugin (e.g. ADB broadcast import) |
 | `sample-compose` | Android sample app |
 | `sample-server` | Demo Ktor server for samples |
@@ -43,7 +42,13 @@ For module dependencies, iOS framework names, and sample wiring, see **[AGENT.md
 
 ## Quick start (Gradle)
 
-From the repo root:
+After cloning, install the shared git hooks (runs ktlint + detekt before every commit):
+
+```bash
+./gradlew installGitHooks
+```
+
+Then build:
 
 ```bash
 ./gradlew build

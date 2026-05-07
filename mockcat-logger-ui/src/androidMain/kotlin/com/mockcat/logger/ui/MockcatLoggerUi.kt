@@ -19,7 +19,6 @@ object MockcatLoggerUi {
 
     /**
      * @return an [Intent] to show the full-screen HTTP log (same as [createLaunchIntent]).
-     * Named for parity with a “get screen / intent” Chucker-style entry point; it is not a Composable.
      */
     @JvmStatic
     @JvmName("getHttpLogListScreen")

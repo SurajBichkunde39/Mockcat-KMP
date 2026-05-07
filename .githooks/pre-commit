@@ -1,0 +1,10 @@
+#!/bin/sh
+set -e
+
+echo "Running ktlint..."
+./gradlew ktlintCheck --quiet
+
+echo "Running detekt..."
+./gradlew detekt --quiet
+
+echo "Pre-commit checks passed."

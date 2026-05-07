@@ -7,9 +7,6 @@ import android.content.Intent
 import android.os.Build
 
 object MockcatUi {
-    /**
-     * [Intent] to start the Mockcat editor, optionally in a new document/task (default) like Chucker’s separate window.
-     */
     @JvmStatic
     @JvmOverloads
     fun createLaunchIntent(
@@ -17,9 +14,9 @@ object MockcatUi {
         newTaskOrDocument: Boolean = true,
     ): Intent = Intent(context, MockcatActivity::class.java).apply {
         if (newTaskOrDocument) {
-            // Separate task (like Chucker) but do **not** use FLAG_ACTIVITY_MULTIPLE_TASK — that
-            // allows parallel tasks so each tap opens another window. [singleTask] + [taskAffinity]
-            // in the manifest brings an existing editor task to the front instead.
+            // Do NOT use FLAG_ACTIVITY_MULTIPLE_TASK — that allows parallel tasks so each tap opens
+            // another window. [singleTask] + [taskAffinity] in the manifest brings an existing
+            // editor task to the front instead.
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
     }

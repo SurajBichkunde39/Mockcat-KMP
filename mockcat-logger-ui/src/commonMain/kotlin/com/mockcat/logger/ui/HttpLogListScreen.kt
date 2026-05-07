@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.mockcat.api.http.LoggedHttpCall
 
 /**
- * Chucker-style traffic list: method, path summary, and status. Detail screen can be added later.
+ * HTTP traffic list: method, path summary, and status.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

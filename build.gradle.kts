@@ -45,3 +45,17 @@ detekt {
     config.setFrom(file("$rootDir/config/detekt.yml"))
     baseline = file("$rootDir/config/detekt-baseline.xml")
 }
+
+// Run once after cloning: ./gradlew installGitHooks
+tasks.register("installGitHooks") {
+    description = "Points git core.hooksPath at .githooks/ so committed hooks are used by all contributors."
+    group = "setup"
+    val repoDir = rootProject.rootDir  // captured at configuration time for config-cache compatibility
+    doLast {
+        ProcessBuilder("git", "config", "core.hooksPath", ".githooks")
+            .directory(repoDir)
+            .start()
+            .waitFor()
+        logger.lifecycle("Git hooks installed — .githooks/pre-commit will run before every commit.")
+    }
+}

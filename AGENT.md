@@ -19,9 +19,8 @@
 | `mockcat-intercept-okhttp` | **`MockcatOkHttpInterceptor`**. Android: **`MockcatIntercept(context)`** + **`bindClient(OkHttpClient)`** using the process-wide mock store (`ProcessMockcatStore` in `mockcat-intercept-persistence`) |
 | `mockcat-intercept-ktor` | **KMP (JVM + Android):** engine-agnostic `MockcatKtorIntercept` (`HttpSend` / `install(MockcatKtorIntercept) { store = … }`). **Android:** `HttpClientConfig.installMockcatKtorIntercept(context)` → `ProcessMockcatStore`. **Optional OkHttp-identical path:** `MockcatKtor.createHttpClient(store) { … }` with OkHttp `preconfigured` + `MockcatOkHttpInterceptor` / `setClient` for redirect loop handling (same as raw OkHttp + `bindClient`) |
 | `mockcat-intercept-urlsession` | iOS: `NSURLRequest` → `HttpRequestMetadata`, `runMockcatUrlSessionResolve` for `URLProtocol` / Swift |
-| `mockcat-integration-chucker` | Android: Chucker share text parser for import |
 | `mockcat-gradle-plugin` | JVM plugin: ADB + broadcast import task (consumers register/configure) |
-| `sample-compose` | Android sample: movies list/detail, OkHttp + `MockcatOkHttpInterceptor`, Chucker, Ktor demo server |
+| `sample-compose` | Android sample: movies list/detail, OkHttp + `MockcatOkHttpInterceptor`, Ktor demo server |
 | `sample-server` | JVM Ktor app: serves `GET /api/movies` and `GET /api/movies/{imdbId}` from `films.json` (port 8080) |
 | `iosApp/MockcatSample` | Native SwiftUI sources and README; Xcode project is local — link KMP frameworks (see that folder) |
 
@@ -35,7 +34,7 @@
 
 - **`gradle.properties`**
   - `android.builtInKotlin=false` — required for `sample-compose` (KMP + `com.android.application`); otherwise the `kotlin` extension is registered twice (see [issuetracker 438678642](https://issuetracker.google.com/issues/438678642)).
-  - `android.newDsl=false` — some tooling (Compose MPP, detekt) still use the legacy `Project.android` accessor for the app and `mockcat-integration-chucker`.
+  - `android.newDsl=false` — some tooling (Compose MPP, detekt) still use the legacy `Project.android` accessor for the app module.
 
 - **Quality**: `./gradlew ktlintCheck detekt` (and `ktlintFormat` as needed). Generated output is excluded from ktlint via a root `subprojects` ktlint `filter` with a `FileTreeElement` `exclude` that omits files whose path is under a `build/` directory. Root `.editorconfig` sets `ktlint_function_naming_ignore_when_annotated_with=Composable,Preview` for Compose.
 
@@ -63,18 +62,18 @@
 
 - **Sources and Xcode project:** `iosApp/MockcatSample/` (includes **`MockcatSample.xcodeproj`**, `project.yml` for [XcodeGen](https://github.com/yonaskolb/XcodeGen) if you regenerate, and a pre-build **Gradle** step that links `MockcatLoggerUI` for the simulator). Open the project, pick an iPhone simulator, and run. See `iosApp/MockcatSample/README.md`.
 - **Kotlin:** `getMockcatStoreForIos(): MockcatStore` in `mockcat-intercept-persistence`, `RunMockcatUrlSessionResolve` / `toHttpRequestMetadata` in `mockcat-intercept-urlsession` for a Swift `URLProtocol` implementation. Put the full URL (including `?query`) in `HttpRequestMetadata.url` so `baseUrl` / `queryParameters` match OkHttp.
-- **HTTP log list (Chucker-style):** import the **`MockcatLoggerUI`** framework. At startup, call `installHttpLogReaderForIos()` (Kotlin) so the Room log store and `HttpLogReaderRegistry` are set up. Present the view from `createHttpLogListViewController()`. No `HttpLogReader` in app feature code. Until a URLSession / Ktor pipeline logs into the same store, the list may stay empty; the viewer is still valid.
+- **HTTP log list:** import the **`MockcatLoggerUI`** framework. At startup, call `installHttpLogReaderForIos()` (Kotlin) so the Room log store and `HttpLogReaderRegistry` are set up. Present the view from `createHttpLogListViewController()`. No `HttpLogReader` in app feature code. Until a URLSession / Ktor pipeline logs into the same store, the list may stay empty; the viewer is still valid.
 - **URLSession:** set `URLSessionConfiguration.protocolClasses` to your `URLProtocol` **before** creating a `URLSession` that should see mocks.
 - **Static mock responses:** when `RunMockcatUrlSessionResolve` returns `ApplyStatic`, use `statusCode`, `body`, `contentType` for the HTTP body and status line. Extra headers are on `responseHeaders`; `flattenedResponseHeaders()` in `mockcat-intercept-urlsession` merges by name (later wins) for `HTTPURLResponse` dictionary wiring—respect `delayMs` off the main thread.
 
 ## Android `sample-compose`
 
 - **Ktor server (host):** `./gradlew :sample-server:run` — listens on `http://127.0.0.1:8080`. The emulator uses `http://10.0.2.2:8080` (see `MovieConfig.BASE_URL` in `com.mockcat.sample.data`); for a physical device, use your machine’s LAN IP or `adb reverse tcp:8080 tcp:8080` and `http://127.0.0.1:8080`.
-- **App (MVVM):** `OkHttpClientFactory` uses Chucker + [`MockcatLogging(context)`](mockcat-logger-okhttp) + [`MockcatIntercept(context)`](mockcat-intercept-okhttp) and `bindClient` for redirects. **`KtorClientFactory`** installs [`installMockcatKtorIntercept`](mockcat-intercept-ktor) (mocks) then [`installMockcatKtorHttpLogging`](mockcat-logger-ktor) on the same `HttpClient`, sharing **`ProcessMockcatStore`** with OkHttp. Process-wide stores and **`HttpLogReaderRegistry`** are initialized when those interceptors first obtain their stores. The “HTTP log” top bar action uses [`MockcatLoggerUi.getHttpLogListScreen(context)`](mockcat-logger-ui) / `startActivity` — the sample does not embed [HttpLogListScreen](mockcat-logger-ui) in the main graph or pass `HttpLogReader` into the `MoviesViewModel`. The sample also depends on `mockcat-intercept-ui`; the list screen **Mocks** action starts [`MockcatUi.createLaunchIntent`](mockcat-intercept-ui) (same process-wide mock store as `MockcatIntercept`). Hand-written Room migrations are deferred (destructive fallback). Packages: `data` (config, DTOs, `OkHttpClientFactory`, repository), `ui.movies` (ViewModel, screen), `ui.theme`.
+- **App (MVVM):** `OkHttpClientFactory` uses [`MockcatLogging(context)`](mockcat-logger-okhttp) + [`MockcatIntercept(context)`](mockcat-intercept-okhttp) and `bindClient` for redirects. **`KtorClientFactory`** installs [`installMockcatKtorIntercept`](mockcat-intercept-ktor) (mocks) then [`installMockcatKtorHttpLogging`](mockcat-logger-ktor) on the same `HttpClient`, sharing **`ProcessMockcatStore`** with OkHttp. Process-wide stores and **`HttpLogReaderRegistry`** are initialized when those interceptors first obtain their stores. The “HTTP log” top bar action uses [`MockcatLoggerUi.getHttpLogListScreen(context)`](mockcat-logger-ui) / `startActivity` — the sample does not embed [HttpLogListScreen](mockcat-logger-ui) in the main graph or pass `HttpLogReader` into the `MoviesViewModel`. The sample also depends on `mockcat-intercept-ui`; the list screen **Mocks** action starts [`MockcatUi.createLaunchIntent`](mockcat-intercept-ui) (same process-wide mock store as `MockcatIntercept`). Hand-written Room migrations are deferred (destructive fallback). Packages: `data` (config, DTOs, `OkHttpClientFactory`, repository), `ui.movies` (ViewModel, screen), `ui.theme`.
 
 ## `mockcat-intercept-ui` (Android) — mock **rules** editor
 
-- `MockcatActivity` uses `android:launchMode="singleTask"` and a dedicated `android:taskAffinity` so repeated launches bring the same editor forward (Chucker-style). `MockcatUi.createLaunchIntent` must **not** add `FLAG_ACTIVITY_MULTIPLE_TASK` when `newTaskOrDocument` is true, or each tap spawns another task.
+- `MockcatActivity` uses `android:launchMode="singleTask"` and a dedicated `android:taskAffinity` so repeated launches bring the same editor forward. `MockcatUi.createLaunchIntent` must **not** add `FLAG_ACTIVITY_MULTIPLE_TASK` when `newTaskOrDocument` is true, or each tap spawns another task.
 - `MockcatUi.createLaunchIntent(context, newTaskOrDocument = true)` — public entry to `MockcatActivity` (declared in the library manifest, `android:exported="false"`; only your app’s package can start it unless you add a manifest `tools:node` / proxy activity).
 - Optional: `MockcatUi.createLaunchPendingIntent` for notifications.
 
@@ -103,6 +102,10 @@ tasks.named<com.mockcat.gradle.MockcatImportTask>("mockcatImport") {
 
 When changing public API or JSON shapes, update `mockcat-api` and any export/import paths in `RoomMockcatStore` and tests.
 
+## Git hooks
+
+Hooks live in `.githooks/`. Run `./gradlew installGitHooks` once after cloning to point `core.hooksPath` there. The `pre-commit` hook runs `ktlintCheck` and `detekt` before every commit.
+
 ## CI
 
-`.github/workflows/ci.yml` runs ktlint, detekt, Android assemble, and key compile tasks including `:mockcat-logger-ui:compileKotlinIosSimulatorArm64` on Linux (Kotlin/Native, no Xcode). The `ios` job is disabled (`if: false`) until you enable a macOS runner; flip it and add `xcodebuild` when a checked-in Xcode project exists.
+No CI workflow is configured yet. When you add GitHub Actions, run ktlint, detekt, Android assemble, and `:mockcat-logger-ui:compileKotlinIosSimulatorArm64` on Linux (Kotlin/Native, no Xcode); add a macOS job with `xcodebuild` once a checked-in Xcode project exists.
