@@ -25,12 +25,72 @@ Library modules intentionally avoid a DI framework; apps wire `MockcatStore` and
 | `mockcat-logger-persistence` | Room-backed HTTP log store |
 | `mockcat-logger-okhttp` / `mockcat-logger-ktor` / `mockcat-logger-urlsession` | Platform loggers |
 | `mockcat-logger-ui` | Compose HTTP log list |
+| `mockcat-noop-android` | No-op Android artifact — same API, zero implementation, empty manifest |
 | `mockcat-gradle-plugin` | JVM Gradle plugin (e.g. ADB broadcast import) |
 | `sample-compose` | Android sample app |
 | `sample-server` | Demo Ktor server for samples |
 | `iosApp/MockcatSample` | iOS SwiftUI sample (URLSession + KMP frameworks) |
 
 For module dependencies, iOS framework names, and sample wiring, see **[AGENT.md](AGENT.md)**.
+
+## Integration
+
+Mockcat is a development tool and must not ship in production builds. The library and its no-op counterpart share an identical public API — swap them per build variant and your app code needs no `#if DEBUG` guards anywhere.
+
+### Android
+
+Add the real library to non-production variants and the no-op to production:
+
+```kotlin
+// app/build.gradle.kts
+dependencies {
+    debugImplementation("com.mockcat:mockcat-intercept-okhttp:<version>")
+    debugImplementation("com.mockcat:mockcat-intercept-ktor:<version>")
+    debugImplementation("com.mockcat:mockcat-intercept-ui:<version>")
+    debugImplementation("com.mockcat:mockcat-logger-okhttp:<version>")
+    debugImplementation("com.mockcat:mockcat-logger-ktor:<version>")
+    debugImplementation("com.mockcat:mockcat-logger-ui:<version>")
+
+    // No-op replaces all of the above in production: same API, empty methods, blank manifest.
+    releaseImplementation("com.mockcat:mockcat-noop-android:<version>")
+}
+```
+
+**With product flavors** — Mockcat works in any non-production variant (e.g. QA release builds). Wire it to whichever configurations are non-production in your setup:
+
+```kotlin
+dependencies {
+    // QA and dev builds get the real library
+    qaDebugImplementation("com.mockcat:mockcat-intercept-okhttp:<version>")
+    qaReleaseImplementation("com.mockcat:mockcat-intercept-okhttp:<version>")
+    // ... other mockcat modules
+
+    // Only production variants get the no-op
+    prodDebugImplementation("com.mockcat:mockcat-noop-android:<version>")
+    prodReleaseImplementation("com.mockcat:mockcat-noop-android:<version>")
+}
+```
+
+**What the no-op guarantees:**
+- No `MockcatActivity` or `HttpLogListActivity` registered in the merged manifest
+- No Room database created
+- No network interception — all requests pass through untouched
+- No log capture — `observeLogs()` returns an empty `Flow`
+- Zero overhead in production code paths
+
+### iOS
+
+The KMP frameworks are linked as **debug-only** by convention. In `link_kmp.sh`, Gradle builds `linkDebugFramework*` targets, and `project.yml` references the `debugFramework` output paths. For a production archive, remove the Mockcat framework dependencies from the Xcode target or restrict them to the `Debug` configuration in your `project.yml`:
+
+```yaml
+# project.yml — restrict to Debug only
+dependencies:
+  - framework: path/to/MockcatLoggerUI.framework
+    embed: true
+    configurations: [Debug]
+```
+
+A no-op XCFramework for iOS is planned for a future release.
 
 ## Requirements
 

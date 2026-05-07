@@ -12,13 +12,6 @@ kotlin {
     sourceSets {
         val androidMain by getting {
             dependencies {
-                // [OkHttpClientFactory]: MockcatLogging + MockcatIntercept (process stores + registry).
-                implementation(project(":mockcat-logger-okhttp"))
-                implementation(project(":mockcat-intercept-okhttp"))
-                implementation(project(":mockcat-logger-ktor"))
-                implementation(project(":mockcat-intercept-ktor"))
-                implementation(project(":mockcat-logger-ui"))
-                implementation(project(":mockcat-intercept-ui"))
                 implementation(libs.androidx.navigation3.runtime)
                 implementation(libs.androidx.navigation3.ui)
                 implementation(libs.androidx.lifecycle.viewmodel.navigation3)
@@ -40,6 +33,19 @@ kotlin {
         }
     }
 }
+
+// Mockcat is a debug-only tool and must never reach production builds.
+// debugImplementation pulls in the real implementation; releaseImplementation swaps in the no-op.
+dependencies {
+    debugImplementation(project(":mockcat-logger-okhttp"))
+    debugImplementation(project(":mockcat-intercept-okhttp"))
+    debugImplementation(project(":mockcat-logger-ktor"))
+    debugImplementation(project(":mockcat-intercept-ktor"))
+    debugImplementation(project(":mockcat-logger-ui"))
+    debugImplementation(project(":mockcat-intercept-ui"))
+    releaseImplementation(project(":mockcat-noop-android"))
+}
+
 android {
     namespace = "com.mockcat.sample"
     compileSdk = libs.versions.androidCompileSdk.get().toInt()

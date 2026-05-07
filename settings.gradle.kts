@@ -17,6 +17,7 @@ dependencyResolutionManagement {
 
 include(
     ":mockcat-api",
+    ":mockcat-noop-android",
     ":mockcat-intercept-ui",
     ":mockcat-intercept-persistence",
     ":mockcat-logger-core",

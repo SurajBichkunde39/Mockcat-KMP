@@ -14,7 +14,10 @@ plugins {
     `maven-publish`
 }
 kotlin {
-    androidTarget { publishAllLibraryVariants() }
+    androidTarget {
+        publishAllLibraryVariants()
+        compilerOptions { jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17) }
+    }
     listOf(
         iosArm64(),
         iosSimulatorArm64(),

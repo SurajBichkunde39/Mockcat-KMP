@@ -22,10 +22,14 @@ targets:
       FRAMEWORK_SEARCH_PATHS: $(inherited) $(SRCROOT)/../../mockcat-logger-ui/build/bin/iosSimulatorArm64/debugFramework $(SRCROOT)/../../mockcat-logger-urlsession/build/bin/iosSimulatorArm64/debugFramework
       OTHER_LDFLAGS: $(inherited) -framework MockcatLoggerUI -framework MockcatLoggerUrlSession
     dependencies:
+      # Mockcat frameworks are debug-only. link_kmp.sh builds linkDebugFramework* targets;
+      # for a production archive, remove these dependencies or restrict them to Debug configuration.
       - framework: ../../mockcat-logger-ui/build/bin/iosSimulatorArm64/debugFramework/MockcatLoggerUI.framework
         embed: true
+        configurations: [Debug]
       - framework: ../../mockcat-logger-urlsession/build/bin/iosSimulatorArm64/debugFramework/MockcatLoggerUrlSession.framework
         embed: true
+        configurations: [Debug]
     sources:
       - path: .
         excludes:

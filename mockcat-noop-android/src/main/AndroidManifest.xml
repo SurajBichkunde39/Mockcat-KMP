@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  No-op manifest: deliberately contains no activities, services, permissions, or providers.
+  Including this module in a release build contributes nothing to the merged manifest.
+-->
+<manifest />

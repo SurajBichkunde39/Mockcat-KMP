@@ -12,6 +12,9 @@ else
   REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 fi
 cd "$REPO_ROOT"
+# Mockcat frameworks are built as debug-only. This script intentionally links the debug variant.
+# For a production archive, remove the Mockcat framework dependencies from project.yml instead
+# of switching this script to linkReleaseFramework — there is no no-op XCFramework yet.
 if [[ -x ./gradlew ]]; then
   exec ./gradlew --no-daemon \
     :mockcat-logger-ui:linkDebugFrameworkIosSimulatorArm64 \
