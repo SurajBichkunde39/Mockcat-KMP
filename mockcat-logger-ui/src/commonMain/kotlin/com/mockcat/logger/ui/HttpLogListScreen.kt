@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
@@ -18,8 +19,11 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,8 +42,32 @@ fun HttpLogListScreen(
     title: String = "HTTP log",
     calls: List<LoggedHttpCall>,
     onBack: (() -> Unit)? = null,
+    onClear: (() -> Unit)? = null,
     onCallClick: (Long) -> Unit = {},
 ) {
+    val showClearDialog = remember { mutableStateOf(false) }
+
+    if (showClearDialog.value) {
+        AlertDialog(
+            onDismissRequest = { showClearDialog.value = false },
+            title = { Text("Clear all logs?") },
+            text = { Text("This will permanently delete all ${calls.size} recorded HTTP calls.") },
+            confirmButton = {
+                TextButton(onClick = {
+                    showClearDialog.value = false
+                    onClear?.invoke()
+                }) {
+                    Text("Clear", color = MaterialTheme.colorScheme.error)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showClearDialog.value = false }) {
+                    Text("Cancel")
+                }
+            },
+        )
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -48,6 +76,13 @@ fun HttpLogListScreen(
                     if (onBack != null) {
                         IconButton(onClick = onBack) {
                             Text("←", style = MaterialTheme.typography.titleLarge)
+                        }
+                    }
+                },
+                actions = {
+                    if (onClear != null && calls.isNotEmpty()) {
+                        IconButton(onClick = { showClearDialog.value = true }) {
+                            Text("🗑", style = MaterialTheme.typography.titleMedium)
                         }
                     }
                 },

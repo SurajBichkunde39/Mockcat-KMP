@@ -8,10 +8,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.mockcat.api.http.LoggedHttpCall
 import com.mockcat.logger.HttpLogReaderRegistry
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 /**
  * Host-agnostic list that reads from [HttpLogReaderRegistry] (installed by the logging layer).
@@ -26,6 +28,7 @@ fun HttpLogListContentFromRegistry(onShareCurl: ((String) -> Unit)? = null) {
     val reader = HttpLogReaderRegistry.currentOrNull()
     var calls by remember { mutableStateOf<List<LoggedHttpCall>>(emptyList()) }
     var selectedCallId by remember { mutableStateOf<Long?>(null) }
+    val scope = rememberCoroutineScope()
 
     if (reader == null) {
         MaterialTheme(colorScheme = lightColorScheme()) {
@@ -58,6 +61,7 @@ fun HttpLogListContentFromRegistry(onShareCurl: ((String) -> Unit)? = null) {
         } else {
             HttpLogListScreen(
                 calls = calls,
+                onClear = { scope.launch { reader.clear() } },
                 onCallClick = { selectedCallId = it },
             )
         }
