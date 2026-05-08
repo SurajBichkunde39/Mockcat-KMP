@@ -16,6 +16,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
@@ -51,6 +53,7 @@ fun HttpLogDetailScreen(
     callId: Long,
     reader: HttpLogReader,
     onBack: () -> Unit,
+    onShareCurl: ((String) -> Unit)? = null,
 ) {
     var call by remember { mutableStateOf<LoggedHttpCall?>(null) }
     LaunchedEffect(callId) {
@@ -69,6 +72,29 @@ fun HttpLogDetailScreen(
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Text("←", style = MaterialTheme.typography.titleLarge)
+                    }
+                },
+                actions = {
+                    val currentCall = call
+                    if (onShareCurl != null && currentCall != null) {
+                        var menuExpanded by remember { mutableStateOf(false) }
+                        Box {
+                            IconButton(onClick = { menuExpanded = true }) {
+                                Text("⋮", style = MaterialTheme.typography.titleLarge)
+                            }
+                            DropdownMenu(
+                                expanded = menuExpanded,
+                                onDismissRequest = { menuExpanded = false },
+                            ) {
+                                DropdownMenuItem(
+                                    text = { Text("Share as curl") },
+                                    onClick = {
+                                        menuExpanded = false
+                                        onShareCurl(buildCurlCommand(currentCall.request))
+                                    },
+                                )
+                            }
+                        }
                     }
                 },
             )

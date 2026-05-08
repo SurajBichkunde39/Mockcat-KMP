@@ -16,9 +16,13 @@ import kotlinx.coroutines.flow.collect
 /**
  * Host-agnostic list that reads from [HttpLogReaderRegistry] (installed by the logging layer).
  * Manages in-place navigation to the detail screen.
+ *
+ * @param onShareCurl Optional callback invoked with a ready-to-use curl command string when the
+ *   user taps "Share as curl" on a detail screen. The platform layer is responsible for presenting
+ *   the OS share sheet; pass null to hide the share option entirely.
  */
 @Composable
-fun HttpLogListContentFromRegistry() {
+fun HttpLogListContentFromRegistry(onShareCurl: ((String) -> Unit)? = null) {
     val reader = HttpLogReaderRegistry.currentOrNull()
     var calls by remember { mutableStateOf<List<LoggedHttpCall>>(emptyList()) }
     var selectedCallId by remember { mutableStateOf<Long?>(null) }
@@ -45,6 +49,7 @@ fun HttpLogListContentFromRegistry() {
                 callId = selected,
                 reader = reader,
                 onBack = { selectedCallId = null },
+                onShareCurl = onShareCurl,
             )
         } else {
             HttpLogListScreen(
