@@ -42,6 +42,10 @@ fun HttpLogListContentFromRegistry(onShareCurl: ((String) -> Unit)? = null) {
         reader.observeLogs().collect { calls = it }
     }
 
+    PlatformBackHandler(enabled = selectedCallId != null) {
+        selectedCallId = null
+    }
+
     MaterialTheme(colorScheme = lightColorScheme()) {
         val selected = selectedCallId
         if (selected != null) {
