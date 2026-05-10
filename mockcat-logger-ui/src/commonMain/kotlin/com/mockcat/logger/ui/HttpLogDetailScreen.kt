@@ -28,6 +28,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -64,7 +67,15 @@ fun HttpLogDetailScreen(
         call = reader.getById(callId)
     }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
     Scaffold(
+        snackbarHost = {
+            SnackbarHost(snackbarHostState) { data ->
+                Snackbar(snackbarData = data)
+            }
+        },
         topBar = {
             TopAppBar(
                 title = {
@@ -91,10 +102,13 @@ fun HttpLogDetailScreen(
                                 onDismissRequest = { menuExpanded = false },
                             ) {
                                 DropdownMenuItem(
-                                    text = { Text("Share as curl") },
+                                    text = { Text(curlShareLabel) },
                                     onClick = {
                                         menuExpanded = false
                                         onShareCurl(buildCurlCommand(currentCall.request))
+                                        curlActionFeedback?.let { msg ->
+                                            scope.launch { snackbarHostState.showSnackbar(msg) }
+                                        }
                                     },
                                 )
                             }
