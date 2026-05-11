@@ -2,6 +2,13 @@ package com.mockcat.logger.ui
 
 import android.content.Context
 import android.content.Intent
+import com.mockcat.logger.HttpLogReaderRegistry
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 object MockcatLoggerUi {
     @JvmStatic
@@ -25,4 +32,26 @@ object MockcatLoggerUi {
     fun getHttpLogListScreen(
         context: Context,
     ): Intent = createLaunchIntent(context, newTaskOrDocument = true)
+
+    private var notificationsEnabled = false
+
+    /**
+     * Called automatically by [MockcatLoggerUiInitializer] at process startup.
+     * Idempotent — safe to call multiple times.
+     */
+    internal fun enableNotifications(context: Context) {
+        if (notificationsEnabled) return
+        notificationsEnabled = true
+        HttpLogNotificationHelper.createChannel(context)
+        val appContext = context.applicationContext
+        CoroutineScope(Dispatchers.IO + SupervisorJob()).launch {
+            // Suspends until the OkHttp/Ktor interceptor installs the reader (happens on first use).
+            val reader = HttpLogReaderRegistry.currentFlow.filterNotNull().first()
+            reader.observeLogs().collect { calls ->
+                if (calls.isNotEmpty() && !HttpLogListActivity.isInForeground) {
+                    HttpLogNotificationHelper.show(appContext, calls)
+                }
+            }
+        }
+    }
 }
