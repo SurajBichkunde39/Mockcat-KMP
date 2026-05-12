@@ -8,31 +8,27 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import platform.Foundation.NSNotificationCenter
 
-private var notificationsInstalled = false
-private val notificationScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
+private var overlayInstalled = false
+private val observerScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 private var observerToken: Any? = null
 
 internal fun installNotificationsForIos() {
-    if (notificationsInstalled) return
-    notificationsInstalled = true
+    if (overlayInstalled) return
+    overlayInstalled = true
 
-    // NSNotificationCenter is an ObjC singleton from Foundation.framework — it is truly
-    // process-wide and not duplicated per Kotlin framework (unlike Kotlin `object` singletons
-    // which are per-dylib). The URLSession framework posts here after each store.emit(); we
-    // receive it here in the UI framework and do a one-shot SQL read to get the full call list.
+    // Receive the cross-framework write signal posted by the URLSession module and update the
+    // in-app overlay. NSNotificationCenter.defaultCenter() is a genuine ObjC process-wide
+    // singleton — it bridges across the two separate Kotlin runtime instances safely.
     observerToken = NSNotificationCenter.defaultCenter().addObserverForName(
         name = "com.mockcat.httpLogWritten",
         `object` = null,
         queue = null,
     ) { _ ->
-        notificationScope.launch {
+        observerScope.launch {
             val reader = HttpLogReaderRegistry.currentOrNull() ?: return@launch
-            // One-shot collect: store.emit() already committed the row before the notification
-            // was posted, so this SELECT is guaranteed to include the new entry.
             val calls = reader.observeLogs().first()
             if (calls.isNotEmpty()) {
-                val latestCall = calls.last()
-                HttpLogNotificationHelperIos.show(latestCall, calls.size)
+                HttpLogOverlayIos.show(calls.size)
             }
         }
     }
