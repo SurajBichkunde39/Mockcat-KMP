@@ -14,13 +14,12 @@ internal object HttpLogNotificationHelperIos {
     // setTitle:/setBody: ObjC selectors are available as direct methods on the mutable subclass.
     private val center = UNUserNotificationCenter.currentNotificationCenter()
 
-    fun show(calls: List<LoggedHttpCall>) {
+    fun show(latestCall: LoggedHttpCall, totalCount: Int) {
         center.removeDeliveredNotificationsWithIdentifiers(listOf(NOTIFICATION_ID))
 
-        val count = calls.size
         val content = UNMutableNotificationContent().apply {
-            setTitle("Mockcat — $count request${if (count == 1) "" else "s"}")
-            setBody(calls.first().notificationLine())
+            setTitle("Mockcat — $totalCount request${if (totalCount == 1) "" else "s"}")
+            setBody(latestCall.notificationLine())
             setSound(UNNotificationSound.defaultSound())
         }
 

@@ -2,6 +2,10 @@ import SwiftUI
 import UIKit
 import UserNotifications
 
+extension Notification.Name {
+    static let mockcatOpenLogger = Notification.Name("MockcatOpenLogger")
+}
+
 @main
 struct MockcatSampleApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
@@ -30,5 +34,17 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
         completionHandler([.banner, .sound, .badge])
+    }
+
+    // When the user taps the Mockcat notification, open the HTTP log screen.
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
+        if response.notification.request.identifier == "mockcat_http_log" {
+            NotificationCenter.default.post(name: .mockcatOpenLogger, object: nil)
+        }
+        completionHandler()
     }
 }

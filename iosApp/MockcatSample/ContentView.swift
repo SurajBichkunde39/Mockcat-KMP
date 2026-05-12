@@ -86,6 +86,10 @@ struct ContentView: View {
             // Top-level Kotlin file facades are exposed as *Kt types (see framework Headers/MockcatLoggerUI.h).
             InstallHttpLogReaderForIosKt.installHttpLogReaderForIos()
         })
+        .onReceive(NotificationCenter.default.publisher(for: .mockcatOpenLogger)) { _ in
+            InstallHttpLogReaderForIosKt.installHttpLogReaderForIos()
+            showHttpLog = true
+        }
         .fullScreenCover(isPresented: $showHttpLog) {
             NavigationStack {
                 HttpLogListViewControllerHost()
