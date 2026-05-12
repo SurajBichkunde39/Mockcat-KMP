@@ -12,7 +12,7 @@ private var overlayInstalled = false
 private val observerScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 private var observerToken: Any? = null
 
-internal fun installNotificationsForIos() {
+internal fun installOverlayForIos() {
     if (overlayInstalled) return
     overlayInstalled = true
 

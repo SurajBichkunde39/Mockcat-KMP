@@ -87,7 +87,6 @@ struct ContentView: View {
             InstallHttpLogReaderForIosKt.installHttpLogReaderForIos()
         })
         .onReceive(NotificationCenter.default.publisher(for: .mockcatOpenLogger)) { _ in
-            InstallHttpLogReaderForIosKt.installHttpLogReaderForIos()
             showHttpLog = true
         }
         .fullScreenCover(isPresented: $showHttpLog) {
