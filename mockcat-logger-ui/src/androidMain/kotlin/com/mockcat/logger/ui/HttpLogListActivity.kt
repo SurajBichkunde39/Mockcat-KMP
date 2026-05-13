@@ -6,6 +6,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 
 class HttpLogListActivity : ComponentActivity() {
+
+    companion object {
+        var isInForeground = false
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -20,5 +25,16 @@ class HttpLogListActivity : ComponentActivity() {
                 },
             )
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        isInForeground = true
+        HttpLogNotificationHelper.cancel(applicationContext)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        isInForeground = false
     }
 }

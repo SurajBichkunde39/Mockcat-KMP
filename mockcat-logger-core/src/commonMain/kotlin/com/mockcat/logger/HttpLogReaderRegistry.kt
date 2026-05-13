@@ -1,6 +1,9 @@
 package com.mockcat.logger
 
 import kotlinx.atomicfu.atomic
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 /**
  * Process-wide [HttpLogReader] for the logger UI (separate activity / iOS view controller) so the
@@ -9,6 +12,10 @@ import kotlinx.atomicfu.atomic
  */
 object HttpLogReaderRegistry {
     private val current = atomic<HttpLogReader?>(null)
+    private val _currentFlow = MutableStateFlow<HttpLogReader?>(null)
+
+    /** Emits the installed reader reactively. Starts as null; emits a value once [install] is called. */
+    val currentFlow: StateFlow<HttpLogReader?> = _currentFlow.asStateFlow()
 
     /**
      * Sets the reader the first time it is called. Later calls with a different value are ignored
@@ -21,6 +28,7 @@ object HttpLogReaderRegistry {
                 return
             }
             if (current.compareAndSet(null, reader)) {
+                _currentFlow.value = reader
                 return
             }
         }
@@ -42,5 +50,6 @@ object HttpLogReaderRegistry {
      */
     fun clear() {
         current.value = null
+        _currentFlow.value = null
     }
 }

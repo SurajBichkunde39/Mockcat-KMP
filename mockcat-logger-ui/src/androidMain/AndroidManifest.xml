@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <application>
+        <provider
+            android:name="com.mockcat.logger.ui.MockcatLoggerUiInitializer"
+            android:authorities="${applicationId}.mockcat-logger-ui"
+            android:exported="false" />
         <activity
             android:name="com.mockcat.logger.ui.HttpLogListActivity"
             android:exported="false"

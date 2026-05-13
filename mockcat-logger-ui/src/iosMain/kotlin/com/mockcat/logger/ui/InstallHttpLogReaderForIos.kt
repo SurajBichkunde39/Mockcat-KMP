@@ -8,4 +8,5 @@ import com.mockcat.logger.persistence.getHttpLogStoreForIos
  */
 fun installHttpLogReaderForIos() {
     getHttpLogStoreForIos()
+    installOverlayForIos()
 }
