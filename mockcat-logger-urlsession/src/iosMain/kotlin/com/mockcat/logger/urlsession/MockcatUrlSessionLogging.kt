@@ -19,7 +19,6 @@ import kotlinx.coroutines.launch
 import platform.Foundation.NSData
 import platform.Foundation.NSError
 import platform.Foundation.NSHTTPURLResponse
-import platform.Foundation.NSNotificationCenter
 import platform.Foundation.NSProcessInfo
 import platform.Foundation.NSURLRequest
 import platform.Foundation.NSURLResponse
@@ -70,7 +69,6 @@ fun mockcatUrlSessionLogCall(
 
     loggerScope.launch {
         store.emit(logged)
-        NSNotificationCenter.defaultCenter().postNotificationName("com.mockcat.httpLogWritten", null, null)
     }
 }
 
