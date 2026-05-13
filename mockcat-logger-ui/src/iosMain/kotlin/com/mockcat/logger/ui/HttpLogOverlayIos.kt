@@ -34,12 +34,10 @@ private const val BUTTON_MARGIN = 20.0
 internal object HttpLogOverlayIos {
     private val mainScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     private var overlayWindow: PassThroughWindow? = null
-    private var overlayButton: OverlayButton? = null
 
-    fun show(count: Int) {
+    fun show() {
         mainScope.launch {
             ensureWindow()
-            overlayButton?.updateCount(count)
             overlayWindow?.setHidden(false)
         }
     }
@@ -88,7 +86,6 @@ internal object HttpLogOverlayIos {
         rootVC.view.addSubview(button)
 
         overlayWindow = window
-        overlayButton = button
     }
 }
 
@@ -120,13 +117,12 @@ private class PassThroughViewController : UIViewController(nibName = null, bundl
     }
 }
 
-// Draggable circular badge showing HTTP call count.
+// Draggable circular badge — tap to open the HTTP logger.
 // CValue<CGPoint> cannot be stored as an ObjC class instance variable in K/N, so
 // touch tracking uses separate Double fields.
 @OptIn(ExperimentalForeignApi::class)
 private class OverlayButton(frame: CValue<CGRect>) : UIView(frame) {
     var onTap: (() -> Unit)? = null
-    private val countLabel = UILabel()
     private var touchStartX = 0.0
     private var touchStartY = 0.0
     private var hasMoved = false
@@ -139,24 +135,13 @@ private class OverlayButton(frame: CValue<CGRect>) : UIView(frame) {
         layer.cornerRadius = w / 2.0
         setClipsToBounds(true)
 
-        val tagLabel = UILabel()
-        tagLabel.text = "HTTP"
-        tagLabel.textColor = UIColor(red = 0.6, green = 0.6, blue = 0.6, alpha = 1.0)
-        tagLabel.font = UIFont.systemFontOfSize(9.0)
-        tagLabel.textAlignment = NSTextAlignmentCenter
-        tagLabel.setFrame(CGRectMake(0.0, h * 0.18, w, h * 0.22))
-        addSubview(tagLabel)
-
-        countLabel.textColor = UIColor.whiteColor
-        countLabel.font = UIFont.boldSystemFontOfSize(18.0)
-        countLabel.textAlignment = NSTextAlignmentCenter
-        countLabel.text = "0"
-        countLabel.setFrame(CGRectMake(0.0, h * 0.40, w, h * 0.44))
-        addSubview(countLabel)
-    }
-
-    fun updateCount(count: Int) {
-        countLabel.text = if (count > 99) "99+" else "$count"
+        val label = UILabel()
+        label.text = "HTTP"
+        label.textColor = UIColor.whiteColor
+        label.font = UIFont.boldSystemFontOfSize(12.0)
+        label.textAlignment = NSTextAlignmentCenter
+        label.setFrame(CGRectMake(0.0, 0.0, w, h))
+        addSubview(label)
     }
 
     @Suppress("UNCHECKED_CAST")
