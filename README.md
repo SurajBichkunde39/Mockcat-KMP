@@ -92,6 +92,112 @@ dependencies:
 
 A no-op XCFramework for iOS is planned for a future release.
 
+## Gradle plugin — push mocks over ADB
+
+The `mockcat-gradle-plugin` lets you load mock rules from JSON files on the build machine and push them to a connected device or emulator without touching app code. Each run replaces **all** mocks atomically (delete-all + insert-all in one transaction).
+
+### 1. Apply the plugin
+
+```kotlin
+// app/build.gradle.kts
+plugins {
+    id("com.mockcat.mockcat-gradle") version "<version>"
+}
+```
+
+### 2. Add mock files and run
+
+Put mock JSON files in a `mocks/` directory next to your `build.gradle.kts` and run:
+
+```bash
+./gradlew mockcatImport
+```
+
+The plugin auto-configures everything:
+
+| Property | Default | Override with |
+|----------|---------|---------------|
+| `adbExecutable` | `$ANDROID_HOME/platform-tools/adb`, then `adb` on PATH | `adbExecutable.set(file(...))` |
+| `applicationId` | Read from AGP `ApplicationExtension.defaultConfig` | `applicationId.set("com.example.app")` |
+| `mockFiles` | All `*.json` under `mocks/` | `mockFiles.from(...)` / `mockFiles.setFrom(...)` |
+| `deviceSerial` | `$ANDROID_SERIAL` env var | `deviceSerial.set("emulator-5554")` |
+
+The receiver that handles the broadcast is declared in the `mockcat-intercept-persistence` library manifest and merges into your app automatically — no extra wiring required.
+
+### 3. Write mock files
+
+Each file can contain a single entry or a wrapped array. Both formats are accepted.
+
+**Single entry:**
+```json
+{
+  "url": "https://api.example.com/movies",
+  "httpMethod": "GET",
+  "responseCode": 200,
+  "responseBody": [{"id": 1, "title": "Inception"}]
+}
+```
+
+**Multiple entries in one file:**
+```json
+{
+  "entries": [
+    {
+      "url": "https://api.example.com/movies",
+      "httpMethod": "GET",
+      "responseCode": 200,
+      "responseBody": [{"id": 1, "title": "Inception"}]
+    },
+    {
+      "url": "https://api.example.com/movies/1",
+      "httpMethod": "GET",
+      "responseCode": 404,
+      "responseBody": {"error": "not found"}
+    }
+  ]
+}
+```
+
+Available fields (all optional except `url` and `httpMethod`):
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `url` | string | Base URL without query string |
+| `httpMethod` | string | `GET`, `POST`, etc. |
+| `label` | string | Human-readable name shown in the UI |
+| `isEnabled` | bool | Default `true`; disabled rules are stored but skipped |
+| `mockType` | string | `STATIC` (default) or `REDIRECT` |
+| `responseCode` | int | HTTP status code for static responses |
+| `responseBody` | any JSON | Response body (object, array, string, …) |
+| `delayMs` | long | Artificial delay added before returning the response |
+| `redirectUrl` | string | Target URL when `mockType` is `REDIRECT` |
+| `requiredHeaders` | object | Header key/value pairs that must be present on the request |
+| `requiredQueryParams` | object | Query param key/value pairs that must be present on the request |
+
+### 4. Run
+
+```bash
+./gradlew mockcatImport
+```
+
+### Multiple connected devices
+
+When only one device is connected the task works with no extra configuration. For multiple devices, set the target serial via the env var ADB already uses:
+
+```bash
+ANDROID_SERIAL=emulator-5554 ./gradlew mockcatImport
+```
+
+Or configure it permanently in `build.gradle.kts`:
+
+```kotlin
+tasks.named<com.mockcat.gradle.MockcatImportTask>("mockcatImport") {
+    deviceSerial.set("emulator-5554")
+}
+```
+
+---
+
 ## Requirements
 
 - **JDK** 17+ (align with your Gradle / Android toolchain).

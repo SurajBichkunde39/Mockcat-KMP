@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <receiver
+            android:name="com.mockcat.persistence.MockcatImportReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.mockcat.action.IMPORT_MOCKS" />
+            </intent-filter>
+        </receiver>
+    </application>
+</manifest>
