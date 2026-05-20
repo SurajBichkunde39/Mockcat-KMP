@@ -1,0 +1,89 @@
+site_name: Mockcat
+site_description: Kotlin Multiplatform HTTP mocking and traffic inspection for Android and iOS
+site_author: Suraj Bichkunde
+site_url: https://surajbichkunde39.github.io/Mockcat-KMP/
+
+repo_name: SurajBichkunde39/Mockcat-KMP
+repo_url: https://github.com/SurajBichkunde39/Mockcat-KMP
+edit_uri: edit/main/docs/docs/
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: teal
+      accent: cyan
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: teal
+      accent: cyan
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.instant
+    - navigation.top
+    - navigation.footer
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.tabs.link
+    - content.code.annotate
+    - toc.follow
+  font:
+    text: Inter
+    code: JetBrains Mono
+  icon:
+    repo: fontawesome/brands/github
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/SurajBichkunde39/Mockcat-KMP
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Installation: getting-started/installation.md
+    - Quick Start: getting-started/quick-start.md
+  - Guides:
+    - OkHttp: guides/okhttp.md
+    - Ktor: guides/ktor.md
+    - iOS & URLSession: guides/ios-urlsession.md
+    - Mock Files: guides/mock-files.md
+    - Gradle Plugin: guides/gradle-plugin.md
+    - HTTP Logging: guides/http-logging.md
+    - Production Builds: guides/production-builds.md
+  - Concepts:
+    - Architecture: concepts/architecture.md
+    - Mock Matching: concepts/matching.md
+  - Changelog: changelog.md
