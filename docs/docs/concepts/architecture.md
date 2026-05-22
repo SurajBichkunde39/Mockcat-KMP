@@ -7,46 +7,41 @@ Mockcat is organized into small, focused modules with a strict layering rule: sh
 ## Layer diagram
 
 ```
-┌──────────────────────────────────────────────────────────────────┐
-│                         Your Application                          │
-└───────────┬──────────────────────┬───────────────────────────────┘
-            │                      │
-            ▼                      ▼
-  ┌──────────────────┐   ┌──────────────────┐
-  │  Intercept Layer │   │   Logging Layer  │
-  │                  │   │                  │
-  │  mockcat-        │   │  mockcat-        │
-  │  intercept-      │   │  logger-okhttp   │
-  │  okhttp          │   │  mockcat-        │
-  │  mockcat-        │   │  logger-ktor     │
-  │  intercept-ktor  │   │  mockcat-        │
-  │  mockcat-        │   │  logger-         │
-  │  intercept-      │   │  urlsession      │
-  │  urlsession      │   └────────┬─────────┘
-  └────────┬─────────┘            │
-           │                      │
-           ▼                      ▼
-  ┌──────────────────┐   ┌──────────────────┐
-  │  Persistence     │   │  Log Persistence │
-  │                  │   │                  │
-  │  mockcat-        │   │  mockcat-        │
-  │  intercept-      │   │  logger-         │
-  │  persistence     │   │  persistence     │
-  └────────┬─────────┘   └────────┬─────────┘
-           │                      │
-           └──────────┬───────────┘
-                      │
-                      ▼
-           ┌──────────────────┐
-           │   mockcat-api    │  ← shared types only (KMP)
-           │                  │
-           │  MockEntry       │
-           │  MockcatStore    │
-           │  MockMatcher     │
-           │  HttpRequestMeta │
-           │  LoggedHttpCall  │
-           │  HttpLogReader   │
-           └──────────────────┘
+┌────────────────────────────────────────────────────────────────┐
+│                        Your Application                        │
+└───────────────────┬────────────────────────┬───────────────────┘
+                    │                        │
+                    ▼                        ▼
+  ┌───────────────────────────┐   ┌───────────────────────────┐
+  │      Intercept Layer      │   │       Logging Layer       │
+  │                           │   │                           │
+  │  mockcat-intercept-okhttp │   │  mockcat-logger-okhttp    │
+  │  mockcat-intercept-ktor   │   │  mockcat-logger-ktor      │
+  │  mockcat-intercept-       │   │  mockcat-logger-          │
+  │  urlsession               │   │  urlsession               │
+  └────────────┬──────────────┘   └────────────┬──────────────┘
+               │                               │
+               ▼                               ▼
+  ┌───────────────────────────┐   ┌───────────────────────────┐
+  │        Persistence        │   │     Log Persistence       │
+  │                           │   │                           │
+  │  mockcat-intercept-       │   │  mockcat-logger-          │
+  │  persistence              │   │  persistence              │
+  └────────────┬──────────────┘   └────────────┬──────────────┘
+               │                               │
+               └───────────────┬───────────────┘
+                               │
+                               ▼
+                  ┌────────────────────────────┐
+                  │        mockcat-api         │  ← shared types only (KMP)
+                  │                            │
+                  │  MockEntry                 │
+                  │  MockcatStore              │
+                  │  MockMatcher               │
+                  │  HttpRequestMetadata       │
+                  │  LoggedHttpCall            │
+                  │  HttpLogReader             │
+                  └────────────────────────────┘
 ```
 
 ---
