@@ -46,6 +46,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.mockcat.api.MockEntry
@@ -202,13 +203,32 @@ fun MockcatApp(
                                             )
                                         },
                                         headlineContent = {
-                                            Text(m.url, style = MaterialTheme.typography.bodyLarge)
+                                            Text(
+                                                urlPath(m.url),
+                                                style = MaterialTheme.typography.bodyLarge,
+                                                fontFamily = FontFamily.Monospace,
+                                            )
                                         },
                                         supportingContent = {
-                                            Text(
-                                                "${m.httpMethod} ${m.mockType}",
-                                                style = MaterialTheme.typography.bodySmall,
-                                            )
+                                            Column {
+                                                urlHost(m.url)?.let {
+                                                    Text(
+                                                        it,
+                                                        style = MaterialTheme.typography.bodySmall,
+                                                    )
+                                                }
+                                                Text(
+                                                    "${m.httpMethod} ${m.mockType}",
+                                                    style = MaterialTheme.typography.bodySmall,
+                                                )
+                                                if (m.label.isNotBlank()) {
+                                                    Text(
+                                                        m.label,
+                                                        style = MaterialTheme.typography.bodySmall,
+                                                        color = MaterialTheme.colorScheme.outline,
+                                                    )
+                                                }
+                                            }
                                         },
                                         trailingContent = {
                                             Button(onClick = { viewModel.openEditor(m) }) { Text("Edit") }
@@ -329,4 +349,16 @@ private fun FormContent(
             modifier = Modifier.fillMaxWidth(),
         ) { Text("Cancel") }
     }
+}
+
+private fun urlPath(url: String): String = try {
+    url.substringAfter("://", url).substringAfter("/", "/").let { "/$it" }
+} catch (_: Exception) {
+    url
+}
+
+private fun urlHost(url: String): String? = try {
+    url.substringAfter("://", "").substringBefore("/").takeIf { it.isNotBlank() }
+} catch (_: Exception) {
+    null
 }
