@@ -14,6 +14,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -27,6 +28,7 @@ import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
@@ -96,11 +98,42 @@ fun MockcatApp(
                     verticalArrangement = Arrangement.spacedBy(0.dp),
                 ) {
                     items(ui.entries, key = { it.id }) { m: MockEntry ->
+                        var showDeleteDialog by remember { mutableStateOf(false) }
                         val dismissState = rememberSwipeToDismissBoxState()
                         LaunchedEffect(dismissState.currentValue) {
                             if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart) {
-                                viewModel.delete(m)
+                                showDeleteDialog = true
                             }
+                        }
+                        if (showDeleteDialog) {
+                            AlertDialog(
+                                onDismissRequest = {
+                                    showDeleteDialog = false
+                                    scope.launch { dismissState.reset() }
+                                },
+                                title = { Text("Delete mock?") },
+                                text = { Text("\"${m.url}\" will be permanently deleted.") },
+                                confirmButton = {
+                                    TextButton(
+                                        onClick = {
+                                            showDeleteDialog = false
+                                            scope.launch { viewModel.delete(m) }
+                                        },
+                                    ) {
+                                        Text("Delete", color = MaterialTheme.colorScheme.error)
+                                    }
+                                },
+                                dismissButton = {
+                                    TextButton(
+                                        onClick = {
+                                            showDeleteDialog = false
+                                            scope.launch { dismissState.reset() }
+                                        },
+                                    ) {
+                                        Text("Cancel")
+                                    }
+                                },
+                            )
                         }
                         SwipeToDismissBox(
                             state = dismissState,
