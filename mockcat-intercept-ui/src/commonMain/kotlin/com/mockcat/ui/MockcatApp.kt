@@ -78,7 +78,22 @@ fun MockcatApp(
         modifier = modifier.fillMaxSize(),
         topBar = {
             if (form == null) {
-                TopAppBar(title = { Text("Mockcat") })
+                val total = ui.entries.size
+                val active = ui.entries.count { it.isEnabled }
+                TopAppBar(
+                    title = {
+                        Column {
+                            Text("Mockcat")
+                            if (total > 0) {
+                                Text(
+                                    "$total mock${if (total == 1) "" else "s"} · $active active",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                        }
+                    },
+                )
             } else {
                 TopAppBar(
                     title = {
