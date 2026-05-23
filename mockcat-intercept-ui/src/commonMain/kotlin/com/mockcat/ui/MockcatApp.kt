@@ -5,15 +5,19 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.outlined.Inbox
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,6 +44,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.mockcat.api.MockEntry
 import com.mockcat.api.MockType
@@ -93,89 +98,121 @@ fun MockcatApp(
                 ) {
                     Text("Add mock")
                 }
-                LazyColumn(
-                    modifier = Modifier.weight(1f).fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(0.dp),
-                ) {
-                    items(ui.entries, key = { it.id }) { m: MockEntry ->
-                        var showDeleteDialog by remember { mutableStateOf(false) }
-                        val dismissState = rememberSwipeToDismissBoxState()
-                        LaunchedEffect(dismissState.currentValue) {
-                            if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart) {
-                                showDeleteDialog = true
-                            }
-                        }
-                        if (showDeleteDialog) {
-                            AlertDialog(
-                                onDismissRequest = {
-                                    showDeleteDialog = false
-                                    scope.launch { dismissState.reset() }
-                                },
-                                title = { Text("Delete mock?") },
-                                text = { Text("\"${m.url}\" will be permanently deleted.") },
-                                confirmButton = {
-                                    TextButton(
-                                        onClick = {
-                                            showDeleteDialog = false
-                                            scope.launch { viewModel.delete(m) }
-                                        },
-                                    ) {
-                                        Text("Delete", color = MaterialTheme.colorScheme.error)
-                                    }
-                                },
-                                dismissButton = {
-                                    TextButton(
-                                        onClick = {
-                                            showDeleteDialog = false
-                                            scope.launch { dismissState.reset() }
-                                        },
-                                    ) {
-                                        Text("Cancel")
-                                    }
-                                },
+                if (ui.entries.isEmpty()) {
+                    Box(
+                        modifier = Modifier.weight(1f).fillMaxWidth(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.padding(horizontal = 32.dp),
+                        ) {
+                            Icon(
+                                Icons.Outlined.Inbox,
+                                contentDescription = null,
+                                modifier = Modifier.size(56.dp),
+                                tint = MaterialTheme.colorScheme.outline,
+                            )
+                            Spacer(Modifier.height(16.dp))
+                            Text(
+                                "No mocks yet",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                            Spacer(Modifier.height(4.dp))
+                            Text(
+                                "Tap \"Add mock\" to create your first mock rule",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.outline,
+                                textAlign = TextAlign.Center,
                             )
                         }
-                        SwipeToDismissBox(
-                            state = dismissState,
-                            enableDismissFromStartToEnd = false,
-                            backgroundContent = {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .background(MaterialTheme.colorScheme.error)
-                                        .padding(end = 20.dp),
-                                    contentAlignment = Alignment.CenterEnd,
-                                ) {
-                                    Icon(
-                                        Icons.Default.Delete,
-                                        contentDescription = "Delete mock",
-                                        tint = MaterialTheme.colorScheme.onError,
-                                    )
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.weight(1f).fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(0.dp),
+                    ) {
+                        items(ui.entries, key = { it.id }) { m: MockEntry ->
+                            var showDeleteDialog by remember { mutableStateOf(false) }
+                            val dismissState = rememberSwipeToDismissBoxState()
+                            LaunchedEffect(dismissState.currentValue) {
+                                if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart) {
+                                    showDeleteDialog = true
                                 }
-                            },
-                        ) {
-                            Column {
-                                ListItem(
-                                    leadingContent = {
-                                        Switch(
-                                            checked = m.isEnabled,
-                                            onCheckedChange = { viewModel.toggleEnabled(m) },
-                                        )
+                            }
+                            if (showDeleteDialog) {
+                                AlertDialog(
+                                    onDismissRequest = {
+                                        showDeleteDialog = false
+                                        scope.launch { dismissState.reset() }
                                     },
-                                    headlineContent = {
-                                        Text(m.url, style = MaterialTheme.typography.bodyLarge)
+                                    title = { Text("Delete mock?") },
+                                    text = { Text("\"${m.url}\" will be permanently deleted.") },
+                                    confirmButton = {
+                                        TextButton(
+                                            onClick = {
+                                                showDeleteDialog = false
+                                                scope.launch { viewModel.delete(m) }
+                                            },
+                                        ) {
+                                            Text("Delete", color = MaterialTheme.colorScheme.error)
+                                        }
                                     },
-                                    supportingContent = {
-                                        Text(
-                                            "${m.httpMethod} ${m.mockType}",
-                                            style = MaterialTheme.typography.bodySmall,
-                                        )
-                                    },
-                                    trailingContent = {
-                                        Button(onClick = { viewModel.openEditor(m) }) { Text("Edit") }
+                                    dismissButton = {
+                                        TextButton(
+                                            onClick = {
+                                                showDeleteDialog = false
+                                                scope.launch { dismissState.reset() }
+                                            },
+                                        ) {
+                                            Text("Cancel")
+                                        }
                                     },
                                 )
-                                HorizontalDivider()
+                            }
+                            SwipeToDismissBox(
+                                state = dismissState,
+                                enableDismissFromStartToEnd = false,
+                                backgroundContent = {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .background(MaterialTheme.colorScheme.error)
+                                            .padding(end = 20.dp),
+                                        contentAlignment = Alignment.CenterEnd,
+                                    ) {
+                                        Icon(
+                                            Icons.Default.Delete,
+                                            contentDescription = "Delete mock",
+                                            tint = MaterialTheme.colorScheme.onError,
+                                        )
+                                    }
+                                },
+                            ) {
+                                Column {
+                                    ListItem(
+                                        leadingContent = {
+                                            Switch(
+                                                checked = m.isEnabled,
+                                                onCheckedChange = { viewModel.toggleEnabled(m) },
+                                            )
+                                        },
+                                        headlineContent = {
+                                            Text(m.url, style = MaterialTheme.typography.bodyLarge)
+                                        },
+                                        supportingContent = {
+                                            Text(
+                                                "${m.httpMethod} ${m.mockType}",
+                                                style = MaterialTheme.typography.bodySmall,
+                                            )
+                                        },
+                                        trailingContent = {
+                                            Button(onClick = { viewModel.openEditor(m) }) { Text("Edit") }
+                                        },
+                                    )
+                                    HorizontalDivider()
+                                }
                             }
                         }
                     }
