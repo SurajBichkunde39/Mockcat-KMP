@@ -20,6 +20,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.Inbox
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -236,7 +237,12 @@ fun MockcatApp(
                                             }
                                         },
                                         trailingContent = {
-                                            Button(onClick = { viewModel.openEditor(m) }) { Text("Edit") }
+                                            IconButton(onClick = { viewModel.openEditor(m) }) {
+                                                Icon(
+                                                    Icons.Default.Edit,
+                                                    contentDescription = "Edit mock",
+                                                )
+                                            }
                                         },
                                     )
                                     HorizontalDivider()
