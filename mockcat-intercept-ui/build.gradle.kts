@@ -27,6 +27,7 @@ kotlin {
                 implementation(libs.composeUi)
                 implementation(libs.composeUiToolingPreview)
                 implementation(libs.composeMaterial3)
+                implementation(compose.materialIconsExtended)
             }
         }
         val androidMain by getting {
