@@ -22,9 +22,12 @@ releaseImplementation("com.mockcat:mockcat-noop-android:0.1.0")
     ```kotlin
     import com.mockcat.logger.okhttp.MockcatLogging
 
+    val mockcatLogger = MockcatLogging(context)
+    val mockcatIntercept = MockcatIntercept(context)
+
     val client = OkHttpClient.Builder()
-        .addInterceptor(MockcatLogging(context))
-        .addInterceptor(MockcatIntercept(context))
+        .addInterceptor(mockcatLogger)
+        .addInterceptor(mockcatIntercept)
         .build()
     ```
 

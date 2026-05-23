@@ -10,12 +10,14 @@ When you add `releaseImplementation("com.mockcat:mockcat-noop-android:0.1.0")`, 
 
 ```kotlin
 // This code compiles and runs safely in both debug and release:
-val mockcat = MockcatIntercept(context)
+val mockcatIntercept = MockcatIntercept(context)
+val mockcatLogger = MockcatLogging(context)
+
 val client = OkHttpClient.Builder()
-    .addInterceptor(MockcatLogging(context))
-    .addInterceptor(mockcat)
+    .addInterceptor(mockcatLogger)
+    .addInterceptor(mockcatIntercept)
     .build()
-    .also { mockcat.bindClient(it) }
+    .also { mockcatIntercept.bindClient(it) }
 ```
 
 In debug: requests are intercepted and logged.

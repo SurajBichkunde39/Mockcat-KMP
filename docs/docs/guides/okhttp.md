@@ -25,13 +25,14 @@ releaseImplementation("com.mockcat:mockcat-noop-android:0.1.0")
 import com.mockcat.intercept.okhttp.MockcatIntercept
 import com.mockcat.logger.okhttp.MockcatLogging
 
-val mockcat = MockcatIntercept(context)
+val mockcatIntercept = MockcatIntercept(context)
+val mockcatLogger = MockcatLogging(context)
 
 val client = OkHttpClient.Builder()
-    .addInterceptor(MockcatLogging(context))
-    .addInterceptor(mockcat)
+    .addInterceptor(mockcatLogger)
+    .addInterceptor(mockcatIntercept)
     .build()
-    .also { mockcat.bindClient(it) }
+    .also { mockcatIntercept.bindClient(it) }
 ```
 
 ### Interceptor order

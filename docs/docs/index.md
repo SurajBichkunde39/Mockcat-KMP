@@ -49,12 +49,14 @@ It has three independent capabilities you can mix and match:
 
 ```kotlin
 // Wire up OkHttp with both intercept + logging
-val mockcat = MockcatIntercept(context)
+val mockcatIntercept = MockcatIntercept(context)
+val mockcatLogger = MockcatLogging(context)
+
 val client = OkHttpClient.Builder()
-    .addInterceptor(MockcatLogging(context))
-    .addInterceptor(mockcat)
+    .addInterceptor(mockcatLogger)
+    .addInterceptor(mockcatIntercept)
     .build()
-    .also { mockcat.bindClient(it) }
+    .also { mockcatIntercept.bindClient(it) }
 
 // Launch the mock editor from anywhere in your app
 startActivity(MockcatUi.createLaunchIntent(context))

@@ -35,13 +35,14 @@ Add both interceptors when building your `OkHttpClient`. The order matters: logg
 import com.mockcat.intercept.okhttp.MockcatIntercept
 import com.mockcat.logger.okhttp.MockcatLogging
 
-val mockcat = MockcatIntercept(context)
+val mockcatIntercept = MockcatIntercept(context)
+val mockcatLogger = MockcatLogging(context)
 
 val client = OkHttpClient.Builder()
-    .addInterceptor(MockcatLogging(context))  // log all traffic
-    .addInterceptor(mockcat)                  // intercept matching requests
+    .addInterceptor(mockcatLogger)    // log all traffic
+    .addInterceptor(mockcatIntercept) // intercept matching requests
     .build()
-    .also { mockcat.bindClient(it) } // (1)!
+    .also { mockcatIntercept.bindClient(it) } // (1)!
 ```
 
 1. `bindClient` is required if you use redirect-type mocks. It gives the interceptor a reference to the client so it can execute the redirected request.

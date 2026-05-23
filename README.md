@@ -16,6 +16,40 @@ Supports Android (OkHttp, Ktor) and iOS (URLSession).
 
 ---
 
+## Screenshots
+
+### HTTP Logger
+
+<table>
+  <tr>
+    <td align="center"><b>Log List</b></td>
+    <td align="center"><b>Overview</b></td>
+    <td align="center"><b>Request</b></td>
+    <td align="center"><b>Response</b></td>
+  </tr>
+  <tr>
+    <td><img src="assets/screenshots/logger_list.png" width="200"/></td>
+    <td><img src="assets/screenshots/logger_detail_overview.png" width="200"/></td>
+    <td><img src="assets/screenshots/logger_detail_request.png" width="200"/></td>
+    <td><img src="assets/screenshots/logger_detail_response.png" width="200"/></td>
+  </tr>
+</table>
+
+### Mock Intercept
+
+<table>
+  <tr>
+    <td align="center"><b>Mock Rules</b></td>
+    <td align="center"><b>Edit Rule</b></td>
+  </tr>
+  <tr>
+    <td><img src="assets/screenshots/intercept_list.png" width="200"/></td>
+    <td><img src="assets/screenshots/intercept_edit.png" width="200"/></td>
+  </tr>
+</table>
+
+---
+
 ## Quick start
 
 ```kotlin title="app/build.gradle.kts"
@@ -29,12 +63,14 @@ dependencies {
 ```
 
 ```kotlin
-val mockcat = MockcatIntercept(context)
+val mockcatIntercept = MockcatIntercept(context)
+val mockcatLogger = MockcatLogging(context)
+
 val client = OkHttpClient.Builder()
-    .addInterceptor(MockcatLogging(context))
-    .addInterceptor(mockcat)
+    .addInterceptor(mockcatLogger)
+    .addInterceptor(mockcatIntercept)
     .build()
-    .also { mockcat.bindClient(it) }
+    .also { mockcatIntercept.bindClient(it) }
 ```
 
 ```bash
@@ -45,49 +81,16 @@ See the **[Quick Start guide](https://surajbichkunde39.github.io/Mockcat-KMP/get
 
 ---
 
-## Module layout
-
-| Module | Role |
-|--------|------|
-| `mockcat-api` | Shared types: mocks, matchers, `MockcatStore` contract (KMP) |
-| `mockcat-intercept-persistence` | Room database and `MockcatStore` implementation |
-| `mockcat-intercept-ui` | Compose mock rules editor |
-| `mockcat-intercept-okhttp` | OkHttp interceptor |
-| `mockcat-intercept-ktor` | Ktor client plugin |
-| `mockcat-intercept-urlsession` | iOS URLSession / `NSURLProtocol` bridge |
-| `mockcat-logger-core` | `HttpLogReader` / `HttpLogWriter` interfaces + registry |
-| `mockcat-logger-persistence` | Room-backed HTTP log store |
-| `mockcat-logger-okhttp` / `mockcat-logger-ktor` / `mockcat-logger-urlsession` | Platform loggers |
-| `mockcat-logger-ui` | Compose HTTP log list + detail viewer |
-| `mockcat-noop-android` | No-op Android artifact — same API, zero implementation, empty manifest |
-| `mockcat-gradle-plugin` | `mockcatImport` Gradle task for ADB mock push |
-| `sample-compose` | Android sample app |
-| `sample-server` | Demo Ktor server for the sample app |
-| `iosApp/MockcatSample` | iOS SwiftUI sample |
-
----
-
 ## Documentation
 
-Full documentation at **[surajbichkunde39.github.io/Mockcat-KMP](https://surajbichkunde39.github.io/Mockcat-KMP/)**:
-
-- [Installation](https://surajbichkunde39.github.io/Mockcat-KMP/getting-started/installation/)
-- [Quick Start](https://surajbichkunde39.github.io/Mockcat-KMP/getting-started/quick-start/)
-- [OkHttp guide](https://surajbichkunde39.github.io/Mockcat-KMP/guides/okhttp/)
-- [Ktor guide](https://surajbichkunde39.github.io/Mockcat-KMP/guides/ktor/)
-- [Mock file format](https://surajbichkunde39.github.io/Mockcat-KMP/guides/mock-files/)
-- [Gradle plugin](https://surajbichkunde39.github.io/Mockcat-KMP/guides/gradle-plugin/)
-- [Production builds](https://surajbichkunde39.github.io/Mockcat-KMP/guides/production-builds/)
-- [Architecture](https://surajbichkunde39.github.io/Mockcat-KMP/concepts/architecture/)
-- [Mock matching](https://surajbichkunde39.github.io/Mockcat-KMP/concepts/matching/)
+Full docs at **[surajbichkunde39.github.io/Mockcat-KMP](https://surajbichkunde39.github.io/Mockcat-KMP/)** — installation, guides for OkHttp/Ktor/URLSession, mock file format, Gradle plugin, architecture, and more.
 
 ---
 
 ## Requirements
 
-- **JDK 17+**
-- **Android Gradle Plugin 9.x**, **Kotlin 2.x**, **minSdk 24+**
-- **iOS**: Xcode 15+, `iosArm64` / `iosSimulatorArm64`
+- JDK 17+, Android Gradle Plugin 9.x, Kotlin 2.x, minSdk 24+
+- iOS: Xcode 15+, `iosArm64` / `iosSimulatorArm64`
 
 ## Contributing
 
