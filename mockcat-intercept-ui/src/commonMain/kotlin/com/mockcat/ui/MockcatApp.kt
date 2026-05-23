@@ -16,11 +16,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.outlined.Inbox
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -85,19 +87,20 @@ fun MockcatApp(
                 )
             }
         },
+        floatingActionButton = {
+            if (form == null) {
+                ExtendedFloatingActionButton(
+                    onClick = { viewModel.openEditor(null) },
+                    icon = { Icon(Icons.Default.Add, contentDescription = null) },
+                    text = { Text("Add mock") },
+                )
+            }
+        },
     ) { padding ->
         if (form == null) {
             Column(
                 modifier = Modifier.padding(padding).fillMaxSize(),
             ) {
-                Button(
-                    onClick = { viewModel.openEditor(null) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                ) {
-                    Text("Add mock")
-                }
                 if (ui.entries.isEmpty()) {
                     Box(
                         modifier = Modifier.weight(1f).fillMaxWidth(),
