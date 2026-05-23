@@ -33,6 +33,9 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Switch
@@ -322,14 +325,18 @@ private fun FormContent(
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
         )
-        OutlinedTextField(
-            value = form.mockTypeInput,
-            onValueChange = { onUpdate(form.copy(mockTypeInput = it)) },
-            label = { Text("Mock type") },
-            placeholder = { Text("STATIC or REDIRECT") },
-            singleLine = true,
-            modifier = Modifier.fillMaxWidth(),
-        )
+        Text("Mock type", style = MaterialTheme.typography.labelMedium)
+        SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+            MockType.entries.forEachIndexed { index, type ->
+                SegmentedButton(
+                    selected = form.resolvedMockType() == type,
+                    onClick = { onUpdate(form.copy(mockTypeInput = type.name)) },
+                    shape = SegmentedButtonDefaults.itemShape(index = index, count = MockType.entries.size),
+                ) {
+                    Text(type.name)
+                }
+            }
+        }
         if (form.resolvedMockType() == MockType.STATIC) {
             OutlinedTextField(
                 value = form.responseCode,
