@@ -53,6 +53,12 @@ class MockcatViewModel(
         closeEditor()
     }
 
+    fun toggleEnabled(entry: MockEntry) {
+        scope.launch {
+            store.insertOrUpdate(entry.copy(isEnabled = !entry.isEnabled))
+        }
+    }
+
     suspend fun delete(entry: MockEntry) {
         if (entry.id != 0L) {
             store.delete(entry)

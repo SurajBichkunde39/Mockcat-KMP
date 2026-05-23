@@ -12,11 +12,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -49,71 +51,77 @@ fun MockcatApp(
     BackHandler(enabled = form != null) {
         viewModel.closeEditor()
     }
-    MaterialTheme {
-        Scaffold(
-            modifier = modifier.fillMaxSize(),
-            topBar = {
-                if (form == null) {
-                    TopAppBar(title = { Text("Mockcat") })
-                } else {
-                    TopAppBar(
-                        title = {
-                            Text(
-                                if (form.id == 0L) {
-                                    "Add mock"
-                                } else {
-                                    "Edit mock"
-                                },
-                            )
-                        },
-                        navigationIcon = {
-                            IconButton(
-                                onClick = { viewModel.closeEditor() },
-                            ) {
-                                Text(
-                                    "←",
-                                    style = MaterialTheme.typography.titleLarge,
-                                )
-                            }
-                        },
-                    )
-                }
-            },
-        ) { padding ->
-            Column(
-                modifier = Modifier.padding(padding).padding(16.dp).fillMaxSize(),
-            ) {
-                if (form == null) {
-                    Button(
-                        onClick = { viewModel.openEditor(null) },
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        Text("Add mock")
-                    }
-                    LazyColumn(
-                        modifier = Modifier.weight(1f).fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        items(ui.entries) { m: MockEntry ->
-                            ListItem(
-                                headlineContent = { Text(m.url) },
-                                supportingContent = { Text("${m.httpMethod} ${m.mockType}") },
-                                trailingContent = {
-                                    Button(onClick = { viewModel.openEditor(m) }) { Text("Edit") }
-                                },
-                            )
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        topBar = {
+            if (form == null) {
+                TopAppBar(title = { Text("Mockcat") })
+            } else {
+                TopAppBar(
+                    title = {
+                        Text(if (form.id == 0L) "Add mock" else "Edit mock")
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = { viewModel.closeEditor() }) {
+                            Text("←", style = MaterialTheme.typography.titleLarge)
                         }
+                    },
+                )
+            }
+        },
+    ) { padding ->
+        if (form == null) {
+            Column(
+                modifier = Modifier.padding(padding).fillMaxSize(),
+            ) {
+                Button(
+                    onClick = { viewModel.openEditor(null) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                ) {
+                    Text("Add mock")
+                }
+                LazyColumn(
+                    modifier = Modifier.weight(1f).fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(0.dp),
+                ) {
+                    items(ui.entries) { m: MockEntry ->
+                        ListItem(
+                            leadingContent = {
+                                Switch(
+                                    checked = m.isEnabled,
+                                    onCheckedChange = { viewModel.toggleEnabled(m) },
+                                )
+                            },
+                            headlineContent = {
+                                Text(m.url, style = MaterialTheme.typography.bodyLarge)
+                            },
+                            supportingContent = {
+                                Text(
+                                    "${m.httpMethod} ${m.mockType}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                )
+                            },
+                            trailingContent = {
+                                Button(onClick = { viewModel.openEditor(m) }) { Text("Edit") }
+                            },
+                        )
+                        HorizontalDivider()
                     }
-                } else {
-                    FormContent(
-                        modifier = Modifier.fillMaxSize(),
-                        form = form,
-                        onUpdate = { viewModel.setForm(it) },
-                        onSave = { scope.launch { viewModel.saveForm() } },
-                        onCancel = { viewModel.closeEditor() },
-                    )
                 }
             }
+        } else {
+            FormContent(
+                modifier = Modifier
+                    .padding(padding)
+                    .padding(horizontal = 16.dp)
+                    .fillMaxSize(),
+                form = form,
+                onUpdate = { viewModel.setForm(it) },
+                onSave = { scope.launch { viewModel.saveForm() } },
+                onCancel = { viewModel.closeEditor() },
+            )
         }
     }
 }
