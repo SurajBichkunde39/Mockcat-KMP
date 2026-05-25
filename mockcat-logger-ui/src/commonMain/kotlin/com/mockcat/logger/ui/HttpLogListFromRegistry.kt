@@ -1,7 +1,9 @@
 package com.mockcat.logger.ui
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,7 +33,7 @@ fun HttpLogListContentFromRegistry(onShareCurl: ((String) -> Unit)? = null) {
     val scope = rememberCoroutineScope()
 
     if (reader == null) {
-        MaterialTheme(colorScheme = lightColorScheme()) {
+        MaterialTheme(colorScheme = if (isSystemInDarkTheme()) darkColorScheme() else lightColorScheme()) {
             Text(
                 "HTTP log is not available yet. On Android, build an OkHttpClient with " +
                     "com.mockcat.logger.okhttp.MockcatLogging (the reader is registered when the " +
@@ -49,7 +51,7 @@ fun HttpLogListContentFromRegistry(onShareCurl: ((String) -> Unit)? = null) {
         selectedCallId = null
     }
 
-    MaterialTheme(colorScheme = lightColorScheme()) {
+    MaterialTheme(colorScheme = if (isSystemInDarkTheme()) darkColorScheme() else lightColorScheme()) {
         val selected = selectedCallId
         if (selected != null) {
             HttpLogDetailScreen(

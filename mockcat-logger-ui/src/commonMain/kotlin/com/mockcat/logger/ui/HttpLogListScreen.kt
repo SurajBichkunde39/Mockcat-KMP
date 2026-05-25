@@ -141,23 +141,35 @@ private fun StatusBadge(call: LoggedHttpCall) {
     val statusCode = call.response?.statusCode
     val badgeText: String
     val badgeColor: Color
+    val badgeTextColor: Color
 
     when {
         statusCode != null -> {
             badgeText = statusCode.toString()
-            badgeColor = when (statusCode / 100) {
-                2 -> Color(0xFF4CAF50)
-                3 -> Color(0xFFFF9800)
-                else -> MaterialTheme.colorScheme.error
+            when (statusCode / 100) {
+                2 -> {
+                    badgeColor = MaterialTheme.colorScheme.tertiaryContainer
+                    badgeTextColor = MaterialTheme.colorScheme.onTertiaryContainer
+                }
+                3 -> {
+                    badgeColor = MaterialTheme.colorScheme.secondaryContainer
+                    badgeTextColor = MaterialTheme.colorScheme.onSecondaryContainer
+                }
+                else -> {
+                    badgeColor = MaterialTheme.colorScheme.error
+                    badgeTextColor = MaterialTheme.colorScheme.onError
+                }
             }
         }
         call.error != null -> {
             badgeText = "ERR"
             badgeColor = MaterialTheme.colorScheme.error
+            badgeTextColor = MaterialTheme.colorScheme.onError
         }
         else -> {
             badgeText = "···"
             badgeColor = MaterialTheme.colorScheme.outline
+            badgeTextColor = Color.White
         }
     }
 
@@ -172,7 +184,7 @@ private fun StatusBadge(call: LoggedHttpCall) {
             text = badgeText,
             style = MaterialTheme.typography.labelMedium,
             fontFamily = FontFamily.Monospace,
-            color = Color.White,
+            color = badgeTextColor,
             textAlign = TextAlign.Center,
         )
     }
