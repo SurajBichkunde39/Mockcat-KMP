@@ -20,6 +20,9 @@ Supports Android (OkHttp, Ktor) and iOS (URLSession).
 
 ### HTTP Logger
 
+<details>
+<summary>Light theme</summary>
+
 <table>
   <tr>
     <td align="center"><b>Log List</b></td>
@@ -35,7 +38,32 @@ Supports Android (OkHttp, Ktor) and iOS (URLSession).
   </tr>
 </table>
 
+</details>
+
+<details>
+<summary>Dark theme</summary>
+
+<table>
+  <tr>
+    <td align="center"><b>Log List</b></td>
+    <td align="center"><b>Overview</b></td>
+    <td align="center"><b>Request</b></td>
+    <td align="center"><b>Response</b></td>
+  </tr>
+  <tr>
+    <td><img src="assets/screenshots/logger_list_dark.png" width="200"/></td>
+    <td><img src="assets/screenshots/logger_detail_overview_dark.png" width="200"/></td>
+    <td><img src="assets/screenshots/logger_detail_request_dark.png" width="200"/></td>
+    <td><img src="assets/screenshots/logger_detail_response_dark.png" width="200"/></td>
+  </tr>
+</table>
+
+</details>
+
 ### Mock Intercept
+
+<details>
+<summary>Light theme</summary>
 
 <table>
   <tr>
@@ -47,6 +75,24 @@ Supports Android (OkHttp, Ktor) and iOS (URLSession).
     <td><img src="assets/screenshots/intercept_edit.png" width="200"/></td>
   </tr>
 </table>
+
+</details>
+
+<details>
+<summary>Dark theme</summary>
+
+<table>
+  <tr>
+    <td align="center"><b>Mock Rules</b></td>
+    <td align="center"><b>Edit Rule</b></td>
+  </tr>
+  <tr>
+    <td><img src="assets/screenshots/intercept_list_dark.png" width="200"/></td>
+    <td><img src="assets/screenshots/intercept_edit_dark.png" width="200"/></td>
+  </tr>
+</table>
+
+</details>
 
 ---
 
