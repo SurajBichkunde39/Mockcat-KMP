@@ -101,6 +101,21 @@ See the **[Quick Start guide](https://surajbichkunde39.github.io/Mockcat-KMP/get
 
 ---
 
+## Run the samples
+
+Both sample apps load movies from a small local server, so start that first and keep it running:
+
+```bash
+./gradlew :sample-server:run   # serves http://localhost:8080 (GET /api/movies)
+```
+
+Then install a client:
+
+- **Android** — `./gradlew :sample-compose:installDebug`, then open *Mockcat sample*. See [`sample-compose/README.md`](sample-compose/README.md).
+- **iOS** — open `iosApp/MockcatSample/MockcatSample.xcodeproj` in Xcode and press ⌘R. See [`iosApp/MockcatSample/README.md`](iosApp/MockcatSample/README.md).
+
+---
+
 ## Documentation
 
 Full docs at **[surajbichkunde39.github.io/Mockcat-KMP](https://surajbichkunde39.github.io/Mockcat-KMP/)** — installation, guides for OkHttp/Ktor/URLSession, mock file format, Gradle plugin, architecture, and more.
