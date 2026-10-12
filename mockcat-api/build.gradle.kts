@@ -10,7 +10,7 @@ plugins {
     `maven-publish`
 }
 kotlin {
-    jvm { }
+    jvm { compilerOptions { jvmTarget.set(JvmTarget.JVM_17) } }
     android {
         namespace = "com.mockcat.api"
         compileSdk = libs.versions.androidCompileSdk.get().toInt()
@@ -42,3 +42,8 @@ detekt {
     config.setFrom(rootProject.file("config/detekt.yml"))
 }
 publishing { publications { } }
+// Match the Kotlin jvmTarget so Java tasks don't follow the host JDK (e.g. 21).
+tasks.withType<JavaCompile>().configureEach {
+    sourceCompatibility = "17"
+    targetCompatibility = "17"
+}

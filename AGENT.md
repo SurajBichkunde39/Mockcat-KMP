@@ -108,4 +108,10 @@ Hooks live in `.githooks/`. Run `./gradlew installGitHooks` once after cloning t
 
 ## CI
 
-No CI workflow is configured yet. When you add GitHub Actions, run ktlint, detekt, Android assemble, and `:mockcat-logger-ui:compileKotlinIosSimulatorArm64` on Linux (Kotlin/Native, no Xcode); add a macOS job with `xcodebuild` once a checked-in Xcode project exists.
+`.github/workflows/ci.yml` runs on every PR and on pushes to `main` (doc/asset-only pushes to `main` skipped). JDK 17 only. Three parallel jobs — reproduce locally with the same commands:
+
+- **Static checks** (Ubuntu): `./gradlew ktlintCheck detekt`
+- **Android build + JVM tests** (Ubuntu): `./gradlew assemble`, then `./gradlew jvmTest :mockcat-gradle-plugin:test`
+- **iOS build + simulator tests** (macOS; Kotlin/Native iOS needs macOS): `./gradlew compileKotlinIosSimulatorArm64 linkDebugFrameworkIosSimulatorArm64`, then `./gradlew iosSimulatorArm64Test`
+
+On failure, `build/reports/` is uploaded as a run artifact. Publishing and the Xcode sample app build are not part of CI yet.

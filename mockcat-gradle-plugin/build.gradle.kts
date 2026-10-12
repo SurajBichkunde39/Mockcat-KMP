@@ -18,14 +18,6 @@ java {
 }
 kotlin { compilerOptions { jvmTarget.set(JvmTarget.JVM_17) } }
 detekt { config.setFrom(rootProject.file("config/detekt.yml")) }
-// mockcat-api is compiled to class file version 65 (JDK 21); the test JVM must be able to load it.
-tasks.named<Test>("test") {
-    javaLauncher.set(
-        javaToolchains.launcherFor {
-            languageVersion.set(JavaLanguageVersion.of(24))
-        },
-    )
-}
 dependencies {
     implementation(gradleApi())
     implementation(libs.kotlinx.serialization.json)
