@@ -1,5 +1,7 @@
 # Mockcat
 
+[![CI](https://github.com/SurajBichkunde39/Mockcat-KMP/actions/workflows/ci.yml/badge.svg)](https://github.com/SurajBichkunde39/Mockcat-KMP/actions/workflows/ci.yml)
+
 **Mockcat** is a Kotlin Multiplatform toolkit for HTTP mocking, traffic inspection, and interactive mock rule editing — without touching your production code.
 
 📖 **[Full documentation →](https://surajbichkunde39.github.io/Mockcat-KMP/)**

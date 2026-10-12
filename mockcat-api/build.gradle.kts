@@ -10,7 +10,7 @@ plugins {
     `maven-publish`
 }
 kotlin {
-    jvm { }
+    jvm { compilerOptions { jvmTarget.set(JvmTarget.JVM_17) } }
     android {
         namespace = "com.mockcat.api"
         compileSdk = libs.versions.androidCompileSdk.get().toInt()
