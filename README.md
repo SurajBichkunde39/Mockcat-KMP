@@ -115,3 +115,5 @@ Full docs at **[surajbichkunde39.github.io/Mockcat-KMP](https://surajbichkunde39
 ## Contributing
 
 Prefer small, focused changes. Keep `commonMain` free of platform types in `mockcat-api`. After Kotlin edits, run `./gradlew ktlintCheck detekt`. Open issues or pull requests against the default branch.
+
+`main` is protected by the ruleset in [`.github/rulesets/main-protection.json`](.github/rulesets/main-protection.json): changes land only through pull requests that have one approval, resolved review threads, and green `CI` checks on a branch that is up to date with `main`. To restore it, import that file under **Settings → Rules → Rulesets → New ruleset → Import a ruleset**.
