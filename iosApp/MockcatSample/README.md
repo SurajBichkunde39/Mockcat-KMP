@@ -12,6 +12,16 @@ cd iosApp/MockcatSample
 xcodegen generate
 ```
 
+## Start the sample server
+
+The app fetches movies from the in-repo Ktor server. From the **repository root**, start it and leave it running:
+
+```bash
+./gradlew :sample-server:run
+```
+
+Check it with `curl http://localhost:8080/api/movies`. The simulator shares the Mac's network, so the app's default base URL `http://localhost:8080` works as is. On a **physical device**, enter your Mac's LAN address (e.g. `http://192.168.1.20:8080`) in the app's *Sample server base URL* field.
+
 ## Open and run (simulator)
 
 1. **Java / Gradle** — the app must be able to run `./gradlew` from the **repository root** (Xcode’s *Link KMP (Gradle)* pre-build script uses `PROJECT_DIR` to find it).
@@ -46,7 +56,7 @@ The Xcode project is wired for the **simulator** framework. For a **physical dev
 
 ## Runtime
 
-The HTTP log list is empty until something logs into the same store (e.g. URLSession + interceptor work in progress). `installHttpLogReaderForIos` still creates the DB and registry so the UI can open.
+Tap **Fetch movies** to load the list from the sample server, then open a movie for its details. Each `URLSession` call is recorded through `MockcatLoggerUrlSession` (see `Api.swift`); tap **HTTP log** in the toolbar to inspect them. If the fetch fails, make sure the sample server is running and the base URL is correct.
 
 ## Optional other frameworks
 
