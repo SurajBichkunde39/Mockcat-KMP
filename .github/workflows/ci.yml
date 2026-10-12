@@ -1,17 +1,17 @@
 name: CI
 
+# PRs always run, so the jobs can be required checks; doc-only pushes to main are skipped.
 on:
   pull_request:
-    paths-ignore: ['docs/**', '**.md', 'assets/**']
   push:
     branches: [main]
     paths-ignore: ['docs/**', '**.md', 'assets/**']
   workflow_dispatch:
 
-# A new push to the same branch/PR cancels the run that is still in progress.
+# A new push to the same PR cancels its in-progress run; every commit on main keeps its run.
 concurrency:
   group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
@@ -75,6 +75,7 @@ jobs:
         with:
           path: ~/.konan
           key: konan-${{ runner.os }}-${{ hashFiles('gradle/libs.versions.toml') }}
+          restore-keys: konan-${{ runner.os }}-
       - name: Build
         run: ./gradlew compileKotlinIosSimulatorArm64 linkDebugFrameworkIosSimulatorArm64
       - name: Unit tests

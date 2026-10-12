@@ -108,7 +108,7 @@ Hooks live in `.githooks/`. Run `./gradlew installGitHooks` once after cloning t
 
 ## CI
 
-`.github/workflows/ci.yml` runs on PRs and pushes to `main` (doc/asset-only changes skipped). JDK 17 only. Three parallel jobs — reproduce locally with the same commands:
+`.github/workflows/ci.yml` runs on every PR and on pushes to `main` (doc/asset-only pushes to `main` skipped). JDK 17 only. Three parallel jobs — reproduce locally with the same commands:
 
 - **Static checks** (Ubuntu): `./gradlew ktlintCheck detekt`
 - **Android build + JVM tests** (Ubuntu): `./gradlew assemble`, then `./gradlew jvmTest :mockcat-gradle-plugin:test`
