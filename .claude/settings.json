@@ -1,0 +1,13 @@
+{
+  "extraKnownMarketplaces": {
+    "android-skills": {
+      "source": {
+        "source": "github",
+        "repo": "android/skills"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "android-skills@android-skills": true
+  }
+}
