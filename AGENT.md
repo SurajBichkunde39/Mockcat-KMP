@@ -2,6 +2,8 @@
 
 **Do not `git commit` in this repository unless the user explicitly asks to commit** — they prefer to review diffs first and commit when aligned.
 
+**Do not add Claude session links** (`claude.ai/code/session_...` URLs or `Claude-Session:` trailers) to commit messages, PR titles or descriptions, or anything else committed to version control.
+
 **Mockcat** is a Kotlin Multiplatform monorepo for HTTP mocking, traffic logging, shared API and storage, platform interceptors, optional UI, and tooling.
 
 ## Layout
