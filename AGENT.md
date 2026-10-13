@@ -38,7 +38,7 @@
 
 - **Libraries** stay free of Koin/Hilt/Dagger; apps/samples wire dependencies explicitly.
 
-- **Publishing (Plan D)**: KMP + `maven-publish` is configured on several modules. For Android, prefer an explicit `publishLibraryVariants` / publication set per module when you add an internal **Artifactory** or **Maven** repository—use a **local-only** `gradle.properties` (not committed) for `mavenUser` / `mavenPassword` / repository URL. Example (consumer `build.gradle.kts` once you add `maven { url = uri("https://your-artifactory/...") }`):
+- **Publishing (Plan D)**: KMP + `maven-publish` is configured on several modules. For Android, KMP library modules publish their single Android variant and `mockcat-noop-android` publishes `release` (`publishing { singleVariant("release") }`). When you add an internal **Artifactory** or **Maven** repository—use a **local-only** `gradle.properties` (not committed) for `mavenUser` / `mavenPassword` / repository URL. Example (consumer `build.gradle.kts` once you add `maven { url = uri("https://your-artifactory/...") }`):
 
   ```kotlin
   publishing { repositories { maven { name = "internal"; url = uri(providers.gradleProperty("mockcatRepoUrl").get()) } } }
@@ -48,7 +48,7 @@
 
 - Android debug: `./gradlew :sample-compose:assembleDebug`
 - iOS KSP (Room): `./gradlew :mockcat-intercept-persistence:kspKotlinIosSimulatorArm64` and/or `:mockcat-logger-persistence:kspKotlinIosSimulatorArm64` (or `kspKotlinIosArm64`)
-- Logger stack compile: `:mockcat-logger-core:compileAndroidMain`, `:mockcat-logger-persistence:compileDebugKotlinAndroid`, `:mockcat-logger-okhttp:compileAndroidMain`, `:mockcat-logger-ui:compileAndroidMain`, `:mockcat-logger-ui:compileKotlinIosSimulatorArm64`. Intercept OkHttp: `:mockcat-intercept-okhttp:compileAndroidMain`. Intercept Ktor: `:mockcat-intercept-ktor:compileKotlinJvm`, `:mockcat-intercept-ktor:compileAndroidMain`. Mock rules UI: `:mockcat-intercept-ui:compileAndroidMain`
+- Logger stack compile: `:mockcat-logger-core:compileAndroidMain`, `:mockcat-logger-persistence:compileAndroidMain`, `:mockcat-logger-okhttp:compileAndroidMain`, `:mockcat-logger-ui:compileAndroidMain`, `:mockcat-logger-ui:compileKotlinIosSimulatorArm64`. Intercept OkHttp: `:mockcat-intercept-okhttp:compileAndroidMain`. Intercept Ktor: `:mockcat-intercept-ktor:compileKotlinJvm`, `:mockcat-intercept-ktor:compileAndroidMain`. Mock rules UI: `:mockcat-intercept-ui:compileAndroidMain`
 - iOS **frameworks** for the Swift app (simulator arm64, debug; run **Embed & Sign** in Xcode in dependency order, see `iosApp/MockcatSample/README.md`):
   - `./gradlew :mockcat-api:linkDebugFrameworkIosSimulatorArm64`
   - `./gradlew :mockcat-intercept-persistence:linkDebugFrameworkIosSimulatorArm64`
