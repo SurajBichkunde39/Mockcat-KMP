@@ -1,8 +1,5 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ktlint)
     alias(libs.plugins.detekt)
     `maven-publish`
@@ -17,10 +14,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     publishing { singleVariant("release") }
-}
-
-kotlin {
-    compilerOptions { jvmTarget.set(JvmTarget.JVM_17) }
 }
 
 dependencies {
