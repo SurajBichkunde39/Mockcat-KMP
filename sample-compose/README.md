@@ -24,7 +24,7 @@ Then open **Mockcat sample** on the device. You can also run the `sample-compose
 
 ## 3. Reach the server from the device
 
-The app's base URL is set in [`MovieConfig.kt`](src/androidMain/kotlin/com/mockcat/sample/data/MovieConfig.kt).
+The app's base URL is set in [`MovieConfig.kt`](src/main/kotlin/com/mockcat/sample/data/MovieConfig.kt).
 
 - **Emulator** — works as is. `http://10.0.2.2:8080` is the emulator's alias for your machine's `localhost`.
 - **Physical device** — forward the port over ADB and point the app at the device's loopback:

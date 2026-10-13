@@ -1,10 +1,12 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 /**
  * HTTP traffic log storage (separate DB from [mockcat-intercept-persistence] mock rules). Same Room+KMP
  * pattern as mock rules; see AGENT.md.
  */
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.android.library)
+    alias(libs.plugins.android.kotlin.multiplatform.library)
     alias(libs.plugins.ksp)
     alias(libs.plugins.androidxRoom)
     alias(libs.plugins.kotlin.serialization)
@@ -13,9 +15,11 @@ plugins {
     `maven-publish`
 }
 kotlin {
-    androidTarget {
-        publishAllLibraryVariants()
-        compilerOptions { jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17) }
+    android {
+        namespace = "com.mockcat.logger.persistence"
+        compileSdk = libs.versions.androidCompileSdk.get().toInt()
+        minSdk = libs.versions.androidMinSdk.get().toInt()
+        compilerOptions { jvmTarget.set(JvmTarget.JVM_17) }
     }
     listOf(
         iosArm64(),
@@ -47,14 +51,5 @@ dependencies {
     add("kspAndroid", libs.roomCompiler)
     add("kspIosArm64", libs.roomCompiler)
     add("kspIosSimulatorArm64", libs.roomCompiler)
-}
-android {
-    namespace = "com.mockcat.logger.persistence"
-    compileSdk = libs.versions.androidCompileSdk.get().toInt()
-    defaultConfig { minSdk = libs.versions.androidMinSdk.get().toInt() }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
 }
 detekt { config.setFrom(rootProject.file("config/detekt.yml")) }

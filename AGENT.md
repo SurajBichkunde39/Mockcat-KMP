@@ -20,21 +20,19 @@
 | `mockcat-intercept-ktor` | **KMP (JVM + Android):** engine-agnostic `MockcatKtorIntercept` (`HttpSend` / `install(MockcatKtorIntercept) { store = … }`). **Android:** `HttpClientConfig.installMockcatKtorIntercept(context)` → `ProcessMockcatStore`. **Optional OkHttp-identical path:** `MockcatKtor.createHttpClient(store) { … }` with OkHttp `preconfigured` + `MockcatOkHttpInterceptor` / `setClient` for redirect loop handling (same as raw OkHttp + `bindClient`) |
 | `mockcat-intercept-urlsession` | iOS: `NSURLRequest` → `HttpRequestMetadata`, `runMockcatUrlSessionResolve` for `URLProtocol` / Swift |
 | `mockcat-gradle-plugin` | JVM plugin: ADB + broadcast import task (consumers register/configure) |
-| `sample-compose` | Android sample: movies list/detail, OkHttp + `MockcatOkHttpInterceptor`, Ktor demo server |
+| `sample-compose` | Android app module (`com.android.application`, no KMP; sources in `src/main`): movies list/detail, OkHttp + `MockcatOkHttpInterceptor`, Ktor demo server |
 | `sample-server` | JVM Ktor app: serves `GET /api/movies` and `GET /api/movies/{imdbId}` from `films.json` (port 8080) |
 | `iosApp/MockcatSample` | Native SwiftUI sources and README; Xcode project is local — link KMP frameworks (see that folder) |
 
 ## Conventions
 
-- **Tooling** (see `gradle/libs.versions.toml`): **Gradle 9.3+**, **AGP 9.1.1**, **Kotlin 2.2.21**, **KSP 2.3.7** (KSP 2.3+ is required for AGP 9 + the Android KMP library plugin; see [google/ksp#2476](https://github.com/google/ksp/issues/2476)). **Room 2.8.4** with the Room Gradle plugin in `mockcat-intercept-persistence` and `mockcat-logger-persistence` (see below). **Compose Multiplatform** plugin `1.10.3` with **Material3** on its own line (`composeMaterial3`).
+- **Tooling** (see `gradle/libs.versions.toml`): **Gradle 9.3+**, **AGP 9.1.1**, **Kotlin 2.2.21**, **KSP 2.3.7** (KSP 2.3+ is required for AGP 9 + the Android KMP library plugin; see [google/ksp#2476](https://github.com/google/ksp/issues/2476)). **detekt 2.0.0-alpha.3** (plugin id `dev.detekt`; 1.x does not support AGP 9). **Room 2.8.4** with the Room Gradle plugin in `mockcat-intercept-persistence` and `mockcat-logger-persistence` (see below). **Compose Multiplatform** plugin `1.10.3` with **Material3** on its own line (`composeMaterial3`).
 
-- **Android KMP library plugin** (most modules): `com.android.kotlin.multiplatform.library` with a `kotlin { android { namespace; compileSdk; minSdk; compilerOptions { jvmTarget } } }` block. There is **no** top-level `android { }` in those modules. **Android main** compile task name is e.g. `:mockcat-api:compileAndroidMain` (single-variant plugin; not `compileDebugKotlinAndroid`).
+- **Android KMP library plugin** (every KMP module with an Android target, including both Room persistence modules): `com.android.kotlin.multiplatform.library` with a `kotlin { android { namespace; compileSdk; minSdk; compilerOptions { jvmTarget } } }` block. There is **no** top-level `android { }` in those modules. **Android main** compile task name is e.g. `:mockcat-api:compileAndroidMain` (single-variant plugin; not `compileDebugKotlinAndroid`).
 
-- **Room (KMP) `com.android.library` exception:** `mockcat-intercept-persistence` and `mockcat-logger-persistence` use `com.android.library` + `androidTarget { publishAllLibraryVariants() }` and the **`androidx.room` Gradle plugin** because the Room plugin is not yet compatible with `com.android.kotlin.multiplatform.library` (class cast on `KotlinMultiplatformAndroidCompilationImpl`). KSP for Room uses `kspAndroid` and `kspKotlinIos*`. Revisit when AndroidX Room supports the new Android KMP target.
+- **Room (KMP):** `mockcat-intercept-persistence` and `mockcat-logger-persistence` use the Android KMP library plugin with the **`androidx.room` Gradle plugin** (`room { schemaDirectory(...) }`). KSP for Room uses `kspAndroid` and `kspIos*`.
 
-- **`gradle.properties`**
-  - `android.builtInKotlin=false` — required for `sample-compose` (KMP + `com.android.application`); otherwise the `kotlin` extension is registered twice (see [issuetracker 438678642](https://issuetracker.google.com/issues/438678642)).
-  - `android.newDsl=false` — some tooling (Compose MPP, detekt) still use the legacy `Project.android` accessor for the app module.
+- **AGP 9 defaults:** built-in Kotlin and the new DSL are on (no `android.builtInKotlin` / `android.newDsl` opt-outs). Pure Android modules (`sample-compose`, `mockcat-noop-android`) must **not** apply `org.jetbrains.kotlin.android`, and no module may combine `org.jetbrains.kotlin.multiplatform` with `com.android.application` or `com.android.library`.
 
 - **Quality**: `./gradlew ktlintCheck detekt` (and `ktlintFormat` as needed). Generated output is excluded from ktlint via a root `subprojects` ktlint `filter` with a `FileTreeElement` `exclude` that omits files whose path is under a `build/` directory. Root `.editorconfig` sets `ktlint_function_naming_ignore_when_annotated_with=Composable,Preview` for Compose.
 
